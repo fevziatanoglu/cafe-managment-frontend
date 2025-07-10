@@ -1,12 +1,10 @@
-function App() {
+import LandingPage from "./components/LandingPage";
 
+
+function App() {
   return (
-    <>
-      <div className='flex bg-red-500'>
-        hello
-      </div>
-    </>
-  )
+    <LandingPage />
+  );
 }
 
-export default App
+export default App;
