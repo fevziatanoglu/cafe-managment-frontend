@@ -17,8 +17,8 @@ export const StatsCard: React.FC<StatsCardProps> = ({
   valueColor = 'text-gray-900' 
 }) => {
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-lg border border-amber-100">
-      <div className="flex items-center justify-between">
+    <div className="bg-white rounded-2xl p-3 py-6 w-full shadow-lg border border-amber-100">
+      <div className="flex items-center justify-between gap-3 px-3">
         <div>
           <p className="text-sm text-gray-600">{title}</p>
           <p className={`text-2xl font-bold ${valueColor}`}>{value}</p>
