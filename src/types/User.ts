@@ -1,10 +1,10 @@
-export interface User {
+export interface USER {
   id: string;
   username: string;
   email: string;
-  role: UserRole;
+  role: USER_ROLE;
   adminId?: string | null;
   refreshToken?: string;
 }
 
-export type UserRole = 'admin' | 'waiter' | 'kitchen';
+export type USER_ROLE = 'admin' | 'waiter' | 'kitchen';
