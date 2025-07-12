@@ -1,13 +1,8 @@
 import type { StateCreator } from "zustand";
-import type { User } from "../../types";
-
-
-
-
-
+import type { USER } from "../../types/User";
 
 export interface AuthState {
-  user: User | null;
+  user: USER | null;
   token: string | null;
   isAuthenticated: boolean;
 };
