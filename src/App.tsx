@@ -5,6 +5,8 @@ import { Menu } from "./components/Menu/Menu";
 import { Orders } from "./components/Orders/Orders";
 import { PublicMenu } from "./components/PublicMenu/PublicMenu";
 import { Tables } from "./components/Tables/Tables";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
 
 
 
@@ -18,6 +20,8 @@ function App() {
         <Route path="/orders" element={<Orders />} />
         <Route path="/publicmenu" element={<PublicMenu />} />
         <Route path="/tables" element={<Tables />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </Router>
   );
