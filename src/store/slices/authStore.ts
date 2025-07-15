@@ -36,7 +36,6 @@ export const createAuthSlice: StateCreator<AuthState & AuthActions> = (
       const response = await login(credential)
       if (response.success) {
         set({ token: response.data?.token, user: response.data?.user, isAuthenticated: true })
-        
       }
       return response
 
@@ -55,7 +54,7 @@ export const createAuthSlice: StateCreator<AuthState & AuthActions> = (
     registerFetch: async (credential: RegisterFormValues) => {
       const response = await register(credential)
       if (response.success && response.data) {
-        set({ token: response.data.token, user: response.data.user, isAuthenticated: true })
+        set({ token: response.data.token})
       }
       return response
     },

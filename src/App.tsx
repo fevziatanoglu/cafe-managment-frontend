@@ -8,23 +8,34 @@ import { Tables } from "./components/Tables/Tables";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import MainLayout from "./layouts/MainLayout";
-
-
+import PublicLayout from "./layouts/PublicLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import AdminLayout from "./layouts/AdminLayout";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/publicmenu" element={<PublicMenu />} />
-          <Route path="/tables" element={<Tables />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          {/* Public routes */}
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
+
+          {/* Authenticated routes */}
+          <Route element={<AuthLayout />}>
+            <Route element={<AdminLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/menu" element={<Menu />} />
+            </Route>
+
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/tables" element={<Tables />} />
+          </Route>
         </Route>
+        <Route path="/publicmenu" element={<PublicMenu />} />
 
       </Routes>
     </Router>
