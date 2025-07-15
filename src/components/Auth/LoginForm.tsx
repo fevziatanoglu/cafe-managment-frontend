@@ -49,7 +49,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void; }) {
 
             {error && <ErrorBox message={error} />}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" autoComplete="on">
                 {/* Email Field */}
                 <div>
                     <label className="block text-sm font-medium text-amber-700 mb-2">
@@ -63,13 +63,14 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void; }) {
                             {...register('email')}
                             type="email"
                             placeholder="Enter your email"
+                            autoComplete="username"
                             className={`
-                                w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
-                                ${errors.email
+                            w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
+                            ${errors.email
                                     ? 'border-red-500 bg-red-50'
                                     : 'border-amber-300 hover:border-amber-400 focus:bg-white'
                                 }
-                            `}
+                        `}
                         />
                     </div>
                     {errors.email && (
@@ -93,17 +94,22 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void; }) {
                             {...register('password')}
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Enter your password"
+                            autoComplete="current-password"
                             className={`
-                                w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
-                                ${errors.password
+                            w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
+                            ${errors.password
                                     ? 'border-red-500 bg-red-50'
                                     : 'border-amber-300 hover:border-amber-400 focus:bg-white'
                                 }
-                            `}
+                        `}
                         />
                         <button
                             type="button"
-                            onClick={() => setShowPassword(!showPassword)}
+                            tabIndex={-1}
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                            onMouseDown={() => setShowPassword(true)}
+                            onMouseUp={() => setShowPassword(false)}
+                            onMouseLeave={() => setShowPassword(false)}
                             className="absolute inset-y-0 right-0 pr-3 flex items-center text-amber-400 hover:text-amber-600 transition-colors"
                         >
                             {showPassword ? (
@@ -126,13 +132,13 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void; }) {
                     type="submit"
                     disabled={isLoading}
                     className={`
-                        w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200
-                        ${isLoading
+                    w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200
+                    ${isLoading
                             ? 'bg-gray-400 cursor-not-allowed'
                             : 'bg-amber-600 hover:bg-amber-700 active:bg-amber-800 transform hover:scale-[1.02] active:scale-[0.98]'
                         }
-                        focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2
-                    `}
+                    focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2
+                `}
                 >
                     {isLoading ? (
                         <div className="flex items-center justify-center">
@@ -160,5 +166,7 @@ export default function LoginForm({ onSuccess }: { onSuccess?: () => void; }) {
                 </div>
             )}
         </div>
+
+
     );
 }

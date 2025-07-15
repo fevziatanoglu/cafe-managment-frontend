@@ -25,7 +25,7 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) 
         setError(null);
         try {
             const response = await registerFetch(data);
-            if(response.success) {
+            if (response.success) {
                 onSuccess?.();
                 navigate('/login');
             } else {
@@ -68,8 +68,8 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) 
                             placeholder="Enter your email"
                             className={`
                                 w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
-                                ${errors.email 
-                                    ? 'border-red-500 bg-red-50' 
+                                ${errors.email
+                                    ? 'border-red-500 bg-red-50'
                                     : 'border-amber-300 hover:border-amber-400 focus:bg-white'
                                 }
                             `}
@@ -98,8 +98,8 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) 
                             placeholder="Choose a username"
                             className={`
                                 w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
-                                ${errors.username 
-                                    ? 'border-red-500 bg-red-50' 
+                                ${errors.username
+                                    ? 'border-red-500 bg-red-50'
                                     : 'border-amber-300 hover:border-amber-400 focus:bg-white'
                                 }
                             `}
@@ -128,15 +128,19 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) 
                             placeholder="Create a password"
                             className={`
                                 w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
-                                ${errors.password 
-                                    ? 'border-red-500 bg-red-50' 
+                                ${errors.password
+                                    ? 'border-red-500 bg-red-50'
                                     : 'border-amber-300 hover:border-amber-400 focus:bg-white'
                                 }
                             `}
                         />
                         <button
                             type="button"
-                            onClick={() => setShowPassword(!showPassword)}
+                            tabIndex={-1}
+                            aria-label={showPassword ? "Hide password" : "Show password"}
+                            onMouseDown={() => setShowPassword(true)}
+                            onMouseUp={() => setShowPassword(false)}
+                            onMouseLeave={() => setShowPassword(false)}
                             className="absolute inset-y-0 right-0 pr-3 flex items-center text-amber-400 hover:text-amber-600 transition-colors"
                         >
                             {showPassword ? (
@@ -175,8 +179,8 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) 
                     disabled={isLoading}
                     className={`
                         w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200
-                        ${isLoading 
-                            ? 'bg-gray-400 cursor-not-allowed' 
+                        ${isLoading
+                            ? 'bg-gray-400 cursor-not-allowed'
                             : 'bg-amber-600 hover:bg-amber-700 active:bg-amber-800 transform hover:scale-[1.02] active:scale-[0.98]'
                         }
                         focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2
