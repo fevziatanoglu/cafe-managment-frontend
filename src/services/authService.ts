@@ -1,23 +1,50 @@
-import axios from 'axios';
+import type { API_RESPONSE } from '../types';
+import type { TOKEN_USER_DATA } from '../types/TokenUser';
+import requestApi from '../utils/api';
+import handleApiError from '../utils/apiErrorHandler';
+import {
+  type LoginFormValues,
+  type RegisterFormValues
+} from '../validations/authSchema';
 
-const API_URL = import.meta.env.VITE_API_URL +"/auth";
+const API_URL = "/auth";
 
-export const register = async (username: string, email: string, password: string) => {
-  const response = await axios.post(`${API_URL}/register`, { username, email, password }, { withCredentials: true });
-  return response.data;
+// Register user
+export const register = async (credentials: RegisterFormValues): Promise<API_RESPONSE<TOKEN_USER_DATA>> => {
+  try {
+    const response = await requestApi.post(`${API_URL}/register`, credentials);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
 
-export const login = async (email: string, password: string) => {
-  const response = await axios.post(`${API_URL}/login`, { email, password }, { withCredentials: true });
-  return response.data;
+// Login user
+export const login = async (credentials: LoginFormValues): Promise<API_RESPONSE<TOKEN_USER_DATA>> => {
+  try {
+    const response = await requestApi.post(`${API_URL}/login`, credentials);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
 
-export const refreshToken = async () => {
-  const response = await axios.get(`${API_URL}/refresh-token`, { withCredentials: true });
-  return response.data;
+// Refresh token
+export const refreshToken = async (): Promise<API_RESPONSE<TOKEN_USER_DATA>> => {
+  try {
+    const response = await requestApi.get(`${API_URL}/refresh-token`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
 
-export const logout = async () => {
-  const response = await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
-  return response.data;
+// Logout user
+export const logout = async (): Promise<API_RESPONSE> => {
+  try {
+    const response = await requestApi.post(`${API_URL}/logout`, {});
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
 };
