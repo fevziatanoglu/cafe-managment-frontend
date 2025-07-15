@@ -7,18 +7,21 @@ import type { LoginFormValues, RegisterFormValues } from "../../validations/auth
 
 import { login, logout, refresh, register } from "../../api/authService";
 
-export interface AuthState {
+interface AuthState {
   user: USER | null;
   token: string | null;
   isAuthenticated: boolean;
+  error : string | null;
 };
 
-export interface AuthActions {
+interface AuthActions {
   loginFetch: (credential: LoginFormValues) => Promise<API_RESPONSE<TOKEN_USER_DATA>>;
   registerFetch: (credential: RegisterFormValues) => Promise<API_RESPONSE<TOKEN_USER_DATA>>;
   refreshToken: () => Promise<API_RESPONSE<TOKEN_USER_DATA>>;
   logoutFetch: () => void;
 };
+
+export type AuthStore = AuthState & AuthActions;
 
 
 
@@ -26,13 +29,13 @@ export const createAuthSlice: StateCreator<AuthState & AuthActions> = (
   (set) => ({
     user: null,
     token: null,
+    error: null,
     isAuthenticated: false,
 
     loginFetch: async (credential: LoginFormValues) => {
       const response = await login(credential)
       if (response.success) {
         set({ token: response.data?.token, user: response.data?.user, isAuthenticated: true })
-        window.location.href = "/";
       }
       return response
 
@@ -52,7 +55,6 @@ export const createAuthSlice: StateCreator<AuthState & AuthActions> = (
       const response = await register(credential)
       if (response.success && response.data) {
         set({ token: response.data.token, user: response.data.user, isAuthenticated: true })
-        window.location.href = "/";
       }
       return response
     },
