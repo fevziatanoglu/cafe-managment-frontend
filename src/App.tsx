@@ -7,6 +7,7 @@ import { PublicMenu } from "./components/PublicMenu/PublicMenu";
 import { Tables } from "./components/Tables/Tables";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import MainLayout from "./layouts/MainLayout";
 
 
 
@@ -14,14 +15,17 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/menu" element={<Menu />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/publicmenu" element={<PublicMenu />} />
-        <Route path="/tables" element={<Tables />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/publicmenu" element={<PublicMenu />} />
+          <Route path="/tables" element={<Tables />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Route>
+
       </Routes>
     </Router>
   );
