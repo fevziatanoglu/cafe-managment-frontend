@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { Coffee, Menu, X } from 'lucide-react';
+import useStore from '../../store';
+import AuthModal from '../Auth/AuthModal';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { openModal } = useStore();
 
   return (
     <header className="bg-white/90 backdrop-blur-md shadow-lg sticky top-0 z-50">
@@ -31,7 +34,7 @@ const Header: React.FC = () => {
 
           {/* CTA Button */}
           <div className="hidden md:flex items-center space-x-4">
-            <button className="px-6 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-full hover:from-amber-700 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
+            <button onClick={() => openModal(<AuthModal/> , "")} className="px-6 py-2 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-full hover:from-amber-700 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
               Get Started
             </button>
           </div>
