@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Modal from "../components/Common/Modal";
 import useStore from "../store";
 import { useEffect, useState } from "react";
+import Navbar from "../components/Navbar";
 
 
 export default function MainLayout() {
@@ -23,7 +24,10 @@ export default function MainLayout() {
         <div>Loading...</div>
       ) : (
         <>
-          <Outlet />
+          <Navbar />
+          <main>
+            <Outlet />
+          </main>
           <Modal />
         </>
       )}
