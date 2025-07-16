@@ -11,6 +11,8 @@ import MainLayout from "./layouts/MainLayout";
 import PublicLayout from "./layouts/PublicLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import AdminLayout from "./layouts/AdminLayout";
+import { Workers } from "./components/Workers/Workers";
+import Staff from "./pages/staff/Staff";
 
 function App() {
   return (
@@ -33,10 +35,11 @@ function App() {
 
             <Route path="/orders" element={<Orders />} />
             <Route path="/tables" element={<Tables />} />
+            <Route path="/workers" element={<Workers />} />
+            <Route path="/staff" element={<Staff />} />
           </Route>
         </Route>
         <Route path="/publicmenu" element={<PublicMenu />} />
-
       </Routes>
     </Router>
   );

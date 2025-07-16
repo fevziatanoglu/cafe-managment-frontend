@@ -36,7 +36,13 @@
         .optional(),
       role: z.enum(['waiter', 'kitchen'], {
         error: 'Role must be either waiter or kitchen'
-      }).optional()
+      }).optional(),
+      password: z
+        .string()
+        .min(6, 'Password must be at least 6 characters')
+        .max(100, 'Password must be less than 100 characters')
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number')
+        .optional()
     });
     
     export const staffIdSchema = z.object({
