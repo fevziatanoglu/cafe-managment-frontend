@@ -1,11 +1,12 @@
 import React from 'react';
 import { ShoppingCart, Plus } from 'lucide-react';
+import useStore from '../../store';
+import OrderForm from './OrderForm';
 
-interface OrderHeaderProps {
-  onAddOrder: () => void;
-}
 
-export const OrderHeader: React.FC<OrderHeaderProps> = ({ onAddOrder }) => {
+
+export const OrderHeader: React.FC = () => {
+  const {openModal} = useStore();
   return (
     <div className="bg-white/90 backdrop-blur-md shadow-lg border-b border-amber-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
@@ -25,7 +26,7 @@ export const OrderHeader: React.FC<OrderHeaderProps> = ({ onAddOrder }) => {
           </div>
           
           <button
-            onClick={onAddOrder}
+          onClick={()=>openModal(<OrderForm /> , "Create an order")}
             className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-amber-600 to-orange-600 text-white rounded-xl hover:from-amber-700 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-lg text-sm sm:text-base"
           >
             <Plus className="h-4 w-4 sm:h-5 sm:w-5" />

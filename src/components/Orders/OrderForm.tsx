@@ -1,0 +1,186 @@
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
+import useStore from '../../store';
+import ErrorBox from '../Auth/ErrorBox';
+import { createOrderSchema, type CreateOrderFormValues } from '../../validations/orderSchema';
+
+export default function OrderForm() {
+  const { createOrderFetch, closeModal } = useStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateOrderFormValues>({
+    resolver: zodResolver(createOrderSchema),
+    defaultValues: {
+      tableId: '',
+      items: [],
+      note: '',
+      status: 'pending',
+    },
+  });
+
+  const onSubmit = async (data: CreateOrderFormValues) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await createOrderFetch({
+        tableId: "6877b35729efa81b2cfa3b7c",
+        items: [ ],
+        note: data.note,
+        status: data.status,
+      });
+      if (response.success) {
+        reset();
+        closeModal();
+      } else {
+        setError(response.message || "Operation failed. Please try again.");
+      }
+    } catch(error) {
+      console.log(error)
+      setError('Network error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+      {error && <ErrorBox message={error} />}
+
+      {/* Table Field */}
+      <div>
+        <label className="block text-sm font-medium text-amber-700 mb-2">
+          Table Number
+        </label>
+        <input
+          {...register('tableId')}
+          type="text"
+          placeholder="Enter table number"
+          className={`
+            w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
+            ${errors.tableId
+              ? 'border-red-500 bg-red-50'
+              : 'border-amber-300 hover:border-amber-400 focus:bg-white'
+            }
+          `}
+        />
+        {errors.tableId && (
+          <p className="mt-1 text-sm text-red-600 flex items-center">
+            <span className="mr-1">⚠️</span>
+            {errors.tableId.message}
+          </p>
+        )}
+      </div>
+
+      {/* Items Field */}
+      <div>
+        <label className="block text-sm font-medium text-amber-700 mb-2">
+          Items
+        </label>
+        <input
+          {...register('items')}
+          type="text"
+          placeholder="Enter items (comma separated)"
+          className={`
+            w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
+            ${errors.items
+              ? 'border-red-500 bg-red-50'
+              : 'border-amber-300 hover:border-amber-400 focus:bg-white'
+            }
+          `}
+        />
+        {errors.items && (
+          <p className="mt-1 text-sm text-red-600 flex items-center">
+            <span className="mr-1">⚠️</span>
+            {errors.items.message}
+          </p>
+        )}
+      </div>
+
+      {/* Note Field */}
+      <div>
+        <label className="block text-sm font-medium text-amber-700 mb-2">
+          Note
+        </label>
+        <textarea
+          {...register('note')}
+          placeholder="Optional note"
+          className={`
+            w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
+            ${errors.note
+              ? 'border-red-500 bg-red-50'
+              : 'border-amber-300 hover:border-amber-400 focus:bg-white'
+            }
+          `}
+        />
+        {errors.note && (
+          <p className="mt-1 text-sm text-red-600 flex items-center">
+            <span className="mr-1">⚠️</span>
+            {errors.note.message}
+          </p>
+        )}
+      </div>
+
+      {/* Status Field */}
+      <div>
+        <label className="block text-sm font-medium text-amber-700 mb-2">
+          Status
+        </label>
+        <select
+          {...register('status')}
+          className={`
+            w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
+            ${errors.status
+              ? 'border-red-500 bg-red-50'
+              : 'border-amber-300 hover:border-amber-400 focus:bg-white'
+            }
+          `}
+        >
+          <option value="pending">Pending</option>
+          <option value="preparing">Preparing</option>
+          <option value="served">Served</option>
+          <option value="paid">Paid</option>
+        </select>
+        {errors.status && (
+          <p className="mt-1 text-sm text-red-600 flex items-center">
+            <span className="mr-1">⚠️</span>
+            {errors.status.message}
+          </p>
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex space-x-3 pt-4">
+        <button
+          type="button"
+          onClick={closeModal}
+          className="flex-1 px-4 py-3 border border-amber-300 text-amber-700 rounded-lg hover:bg-amber-50 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={`
+            flex-1 px-4 py-3 rounded-lg font-medium text-white transition-all duration-200
+            ${isLoading
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-amber-600 hover:bg-amber-700 active:bg-amber-800'
+            }
+          `}
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+              Creating...
+            </div>
+          ) : (
+            'Create Order'
+          )}
+        </button>
+      </div>
+    </form>
+  );
+}

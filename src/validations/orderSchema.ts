@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const createOrderSchema = z.object({
-  table: z.string().min(1, "Table number is required").optional(),
+  tableId: z.string().min(1, "Table number is required").optional(),
   items: z.union([
     z.array(z.string().min(1, "Item name required")),
     z.string().min(1, "Items required")
@@ -13,7 +13,7 @@ export const createOrderSchema = z.object({
 export type CreateOrderFormValues = z.infer<typeof createOrderSchema>;
 
 export const updateOrderSchema = z.object({
-  table: z.string().min(1, "Table number is required").optional(),
+  tableId: z.string().min(1, "Table number is required").optional(),
   items: z.union([
     z.array(z.string().min(1, "Item name required")),
     z.string().min(1, "Items required")
