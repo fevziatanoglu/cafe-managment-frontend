@@ -10,7 +10,7 @@ import {
   createStaff, 
   updateStaff, 
   deleteStaff 
-} from "../../services/staffService";
+} from "../../api/staffService";
 import type { CreateStaffFormValues, UpdateStaffFormValues } from "../../validations/staffScherma";
 
 interface StaffState {

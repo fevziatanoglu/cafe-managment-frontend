@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./components/Landing/LandingPage";
 import { Dashboard } from "./components/Dashboard";
 import { Menu } from "./components/Menu/Menu";
-import { Orders } from "./components/Orders/Orders";
 import { PublicMenu } from "./components/PublicMenu/PublicMenu";
 import { Tables } from "./components/Tables/Tables";
 import Login from "./pages/auth/Login";
@@ -11,8 +10,8 @@ import MainLayout from "./layouts/MainLayout";
 import PublicLayout from "./layouts/PublicLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import AdminLayout from "./layouts/AdminLayout";
-import { Workers } from "./components/Workers/Workers";
 import Staff from "./pages/staff/Staff";
+import Orders from "./pages/orders/orders";
 
 function App() {
   return (
@@ -31,12 +30,11 @@ function App() {
             <Route element={<AdminLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/menu" element={<Menu />} />
+              <Route path="/staff" element={<Staff />} />
             </Route>
 
             <Route path="/orders" element={<Orders />} />
             <Route path="/tables" element={<Tables />} />
-            <Route path="/workers" element={<Workers />} />
-            <Route path="/staff" element={<Staff />} />
           </Route>
         </Route>
         <Route path="/publicmenu" element={<PublicMenu />} />
