@@ -2,6 +2,7 @@ import type { API_RESPONSE } from '../types';
 import type { ORDER } from '../types/Order';
 import requestApi from '../utils/api';
 import handleApiError from '../utils/apiErrorHandler';
+import type { CreateOrderFormValues, UpdateOrderFormValues } from '../validations/orderSchema';
 
 // Get all ORDERs
 export const getOrders = async (): Promise<API_RESPONSE<ORDER[]>> => {
@@ -24,7 +25,7 @@ export const getOrderById = async (id: string): Promise<API_RESPONSE<ORDER>> => 
 };
 
 // Create new order
-export const createOrder = async (orderData: Omit<ORDER, 'id' | 'createdAt' | 'updatedAt'>): Promise<API_RESPONSE<ORDER>> => {
+export const createOrder = async (orderData: CreateOrderFormValues): Promise<API_RESPONSE<ORDER>> => {
   try {
     const response = await requestApi.post('/orders', orderData);
     return response.data;
@@ -34,7 +35,7 @@ export const createOrder = async (orderData: Omit<ORDER, 'id' | 'createdAt' | 'u
 };
 
 // Update order
-export const updateOrder = async (id: string, orderData: Partial<ORDER>): Promise<API_RESPONSE<ORDER>> => {
+export const updateOrder = async (id: string, orderData: UpdateOrderFormValues): Promise<API_RESPONSE<ORDER>> => {
   try {
     const response = await requestApi.put(`/orders/${id}`, orderData);
     return response.data;
