@@ -1,44 +1,64 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import useStore from '../../store';
 import ErrorBox from '../Auth/ErrorBox';
 import { createOrderSchema, type CreateOrderFormValues } from '../../validations/orderSchema';
+import type { ORDER } from '../../types/Order';
 
-export default function OrderForm() {
-  const { createOrderFetch, closeModal } = useStore();
+export default function OrderForm({ order }: {order?: ORDER}) {
+  const { createOrderFetch, updateOrderFetch, closeModal } = useStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateOrderFormValues>({
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<CreateOrderFormValues>({
     resolver: zodResolver(createOrderSchema),
     defaultValues: {
-      tableId: '',
+      tableId: order?.tableId || '',
       items: [],
       note: '',
-      status: 'pending',
+      status: order?.status || 'pending',
     },
   });
+
+  useEffect(() => {
+    if (order) {
+      setValue('tableId', order.tableId);
+      setValue('items', []);
+      setValue('status', order.status);
+      setValue('note', '');
+    }
+  }, [order, setValue]);
 
   const onSubmit = async (data: CreateOrderFormValues) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await createOrderFetch({
-        tableId: "6877b35729efa81b2cfa3b7c",
-        items: [ ],
-        note: data.note,
-        status: data.status,
-      });
+      let response;
+      if (order) {
+        response = await updateOrderFetch(order._id, {
+          tableId: data.tableId,
+          items: data.items,
+          note: data.note,
+          status: data.status,
+        });
+      } else {
+        response = await createOrderFetch({
+          tableId: data.tableId,
+          items: data.items,
+          note: data.note,
+          status: data.status,
+        });
+      }
       if (response.success) {
         reset();
         closeModal();
       } else {
         setError(response.message || "Operation failed. Please try again.");
       }
-    } catch(error) {
-      console.log(error)
+    } catch (error) {
+      console.log(error);
       setError('Network error occurred. Please try again.');
     } finally {
       setIsLoading(false);
@@ -174,10 +194,10 @@ export default function OrderForm() {
           {isLoading ? (
             <div className="flex items-center justify-center">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-              Creating...
+              {order ? 'Updating...' : 'Creating...'}
             </div>
           ) : (
-            'Create Order'
+            order ? 'Update Order' : 'Create Order'
           )}
         </button>
       </div>
