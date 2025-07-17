@@ -1,5 +1,4 @@
-import type { API_RESPONSE } from "../types";
-import type { TOKEN_USER_DATA } from "../types/TokenUser";
+import type { API_RESPONSE, TOKEN_USER_DATA } from "../types";
 import requestApi from "../utils/api";
 import handleApiError from "../utils/apiErrorHandler";
 import type { LoginFormValues, RegisterFormValues } from "../validations/authSchema";

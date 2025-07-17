@@ -1,14 +1,16 @@
 export interface ORDER {
-  id: string;
+  _id: string;
   tableId: string;
   items: {
     productId: string;
     quantity: number;
   }[];
-  status: 'pending' | 'preparing' | 'served' | 'paid';
+  status: ORDER_STATUS;
   total: number;
   createdBy: string;
   adminId: string;
 }
+
+export type ORDER_STATUS = 'pending' | 'preparing' | 'served' | 'paid'; 
 
 

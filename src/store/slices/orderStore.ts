@@ -1,6 +1,5 @@
 import type { StateCreator } from "zustand";
-import type { ORDER } from "../../types/Order";
-import type { API_RESPONSE } from "../../types";
+import type { API_RESPONSE, ORDER } from "../../types";
 import {
   getOrders,
   getOrderById,
@@ -60,7 +59,7 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
     if (response.success && response.data) {
       const currentOrders = get().orders;
       const updatedOrders = currentOrders.map(order =>
-        order.id === id ? response.data! : order
+        order._id === id ? response.data! : order
       );
       set({ orders: updatedOrders, selectedOrder: response.data });
     }
@@ -71,7 +70,7 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
     const response = await deleteOrder(id);
     if (response.success) {
       const currentOrders = get().orders;
-      const filteredOrders = currentOrders.filter(order => order.id !== id);
+      const filteredOrders = currentOrders.filter(order => order._id !== id);
       set({ orders: filteredOrders, selectedOrder: null });
     }
     return response;
