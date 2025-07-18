@@ -1,9 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { TableProperties } from 'lucide-react';
-import { TableCard } from './TableCard';
+import  TableCard  from './TableCard';
 import { TableModal } from './TableModal';
-import { TableHeader } from './TableHeader';
-import { TableStats } from './TableStats';
+import TableHeader  from './TableHeader';
+import  TableStats  from './TableStats';
 import { TableFilters } from './TableFilters';
 
 export interface Table {

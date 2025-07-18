@@ -1,55 +1,69 @@
-import React from 'react';
-import { TableProperties, CheckCircle, Users, Clock } from 'lucide-react';
-import { StatsCard } from '../Dashboard/StatsCard';
-import type { Table } from './Tables';
+import type React from "react";
+import type { TABLE } from "../../types";
 
 interface TableStatsProps {
-  tables: Table[];
+  tables: TABLE[];
 }
 
-export const TableStats: React.FC<TableStatsProps> = ({ tables }) => {
-  const totalTables = tables.length;
-  const availableTables = tables.filter(t => t.status === 'available').length;
-  const occupiedTables = tables.filter(t => t.status === 'occupied').length;
-  const reservedTables = tables.filter(t => t.status === 'reserved').length;
-  const totalCapacity = tables.reduce((sum, t) => sum + t.capacity, 0);
+const TableStats: React.FC<TableStatsProps> = ({ tables }) => {
+  const stats = {
+    total: tables.length,
+    empty: tables.filter(t => t.status === 'empty').length,
+    occupied: tables.filter(t => t.status === 'occupied').length,
+    reserved: tables.filter(t => t.status === 'reserved').length
+  };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-      <StatsCard
-        title="Total Tables"
-        value={totalTables}
-        icon={TableProperties}
-        iconColor="from-blue-500 to-blue-600"
-      />
-      <StatsCard
-        title="Available"
-        value={availableTables}
-        icon={CheckCircle}
-        iconColor="from-green-500 to-green-600"
-        valueColor="text-green-600"
-      />
-      <StatsCard
-        title="Occupied"
-        value={occupiedTables}
-        icon={Users}
-        iconColor="from-red-500 to-red-600"
-        valueColor="text-red-600"
-      />
-      <StatsCard
-        title="Reserved"
-        value={reservedTables}
-        icon={Clock}
-        iconColor="from-blue-500 to-blue-600"
-        valueColor="text-blue-600"
-      />
-      <StatsCard
-        title="Total Capacity"
-        value={totalCapacity}
-        icon={Users}
-        iconColor="from-purple-500 to-purple-600"
-        valueColor="text-purple-600"
-      />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="bg-white rounded-2xl p-6 shadow-lg border border-amber-100">
+        <div className="flex items-center">
+          <div className="bg-gray-100 p-3 rounded-xl">
+            <span className="text-2xl">🏪</span>
+          </div>
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-600">Total Tables</p>
+            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl p-6 shadow-lg border border-amber-100">
+        <div className="flex items-center">
+          <div className="bg-green-100 p-3 rounded-xl">
+            <span className="text-2xl">✅</span>
+          </div>
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-600">Empty</p>
+            <p className="text-2xl font-bold text-green-600">{stats.empty}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl p-6 shadow-lg border border-amber-100">
+        <div className="flex items-center">
+          <div className="bg-red-100 p-3 rounded-xl">
+            <span className="text-2xl">🔴</span>
+          </div>
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-600">Occupied</p>
+            <p className="text-2xl font-bold text-red-600">{stats.occupied}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl p-6 shadow-lg border border-amber-100">
+        <div className="flex items-center">
+          <div className="bg-blue-100 p-3 rounded-xl">
+            <span className="text-2xl">🔵</span>
+          </div>
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-600">Reserved</p>
+            <p className="text-2xl font-bold text-blue-600">{stats.reserved}</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
+
+export default TableStats;

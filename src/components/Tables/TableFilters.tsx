@@ -1,51 +1,49 @@
 import React from 'react';
 import { Filter } from 'lucide-react';
-import type { Table } from './Tables';
+import type { TABLE } from '../../types';
+
+
 
 interface TableFiltersProps {
-  selectedStatus: string;
-  onStatusChange: (status: string) => void;
-  tables: Table[];
+  selectedStatus: 'all' | 'empty' | 'occupied' | 'reserved';
+  onStatusChange: (status: 'all' | 'empty' | 'occupied' | 'reserved') => void;
+  tables: TABLE[];
 }
 
-export const TableFilters: React.FC<TableFiltersProps> = ({
-  selectedStatus,
-  onStatusChange,
-  tables
-}) => {
+export const TableFilters: React.FC<TableFiltersProps> = ({ selectedStatus, onStatusChange, tables }) => {
   const statusCounts = {
     all: tables.length,
-    available: tables.filter(t => t.status === 'available').length,
+    empty: tables.filter(t => t.status === 'empty').length,
     occupied: tables.filter(t => t.status === 'occupied').length,
     reserved: tables.filter(t => t.status === 'reserved').length
   };
 
   const statusOptions = [
-    { 
-      value: 'all', 
-      label: 'All Tables', 
-      count: statusCounts.all, 
+    {
+      value: 'all' as const,
+      label: 'All Tables',
+      count: statusCounts.all,
       color: 'bg-gray-100 text-gray-700 hover:bg-gray-200',
-      icon: '🏢'
+      icon: '🏪'
     },
-    { 
-      value: 'available', 
-      label: 'Available', 
-      count: statusCounts.available, 
+    {
+      value: 'empty' as const,
+      label: 'Empty',
+      count: statusCounts.empty,
       color: 'bg-green-100 text-green-700 hover:bg-green-200',
       icon: '✅'
     },
-    { 
-      value: 'occupied', 
-      label: 'Occupied', 
-      count: statusCounts.occupied, 
+    {
+      value: 'occupied' as const,
+      label: 'Occupied',
+      count: statusCounts.occupied,
       color: 'bg-red-100 text-red-700 hover:bg-red-200',
       icon: '🔴'
     },
-    { 
-      value: 'reserved', 
-      label: 'Reserved', 
-      count: statusCounts.reserved, 
+    {
+      value: 'reserved' as const,
+      label: 'Reserved',
+      count: statusCounts.reserved,
       color: 'bg-blue-100 text-blue-700 hover:bg-blue-200',
       icon: '🔵'
     }
@@ -65,11 +63,10 @@ export const TableFilters: React.FC<TableFiltersProps> = ({
           <button
             key={option.value}
             onClick={() => onStatusChange(option.value)}
-            className={`flex items-center space-x-3 px-6 py-4 rounded-xl font-medium transition-all duration-300 ${
-              selectedStatus === option.value
-                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg transform scale-105'
-                : option.color
-            }`}
+            className={`flex items-center space-x-3 px-6 py-4 rounded-xl font-medium transition-all duration-300 ${selectedStatus === option.value
+              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg transform scale-105'
+              : option.color
+              }`}
           >
             <span className="text-xl">{option.icon}</span>
             <div className="text-left">
@@ -84,3 +81,6 @@ export const TableFilters: React.FC<TableFiltersProps> = ({
     </div>
   );
 };
+
+
+

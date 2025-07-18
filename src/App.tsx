@@ -3,7 +3,6 @@ import LandingPage from "./components/Landing/LandingPage";
 import { Dashboard } from "./components/Dashboard";
 import { Menu } from "./components/Menu/Menu";
 import { PublicMenu } from "./components/PublicMenu/PublicMenu";
-import { Tables } from "./components/Tables/Tables";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import MainLayout from "./layouts/MainLayout";
@@ -12,6 +11,7 @@ import AuthLayout from "./layouts/AuthLayout";
 import AdminLayout from "./layouts/AdminLayout";
 import Staff from "./pages/staff/Staff";
 import Orders from "./pages/orders/orders";
+import Tables from "./pages/tables/tables";
 
 function App() {
   return (
