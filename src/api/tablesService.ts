@@ -2,6 +2,7 @@ import type { API_RESPONSE } from '../types';
 import type { TABLE } from '../types/Table';
 import requestApi from '../utils/api';
 import handleApiError from '../utils/apiErrorHandler';
+import type { TableFormData } from '../validations/tableSchema';
 
 // Get all tables
 export const getTables = async (): Promise<API_RESPONSE<TABLE[]>> => {
@@ -24,7 +25,7 @@ export const getTableById = async (id: string): Promise<API_RESPONSE<TABLE>> => 
 };
 
 // Create new table
-export const createTable = async (tableData: Omit<TABLE, '_id' | 'adminId'>): Promise<API_RESPONSE<TABLE>> => {
+export const createTable = async (tableData: TableFormData): Promise<API_RESPONSE<TABLE>> => {
   try {
     const response = await requestApi.post('/tables', tableData);
     return response.data;
@@ -34,7 +35,7 @@ export const createTable = async (tableData: Omit<TABLE, '_id' | 'adminId'>): Pr
 };
 
 // Update table
-export const updateTable = async (id: string, tableData: Partial<TABLE>): Promise<API_RESPONSE<TABLE>> => {
+export const updateTable = async (id: string, tableData: TableFormData): Promise<API_RESPONSE<TABLE>> => {
   try {
     const response = await requestApi.put(`/tables/${id}`, tableData);
     return response.data;
