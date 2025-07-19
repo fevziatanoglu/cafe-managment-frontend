@@ -8,6 +8,7 @@ export interface ORDER {
   status: ORDER_STATUS;
   total: number;
   createdBy: string;
+  createdAt: string;
   adminId: string;
 }
 

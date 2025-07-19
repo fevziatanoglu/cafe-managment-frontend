@@ -11,11 +11,13 @@ import type { CreateOrderFormValues, UpdateOrderFormValues } from "../../validat
 
 interface OrderState {
   orders: ORDER[];
+  pendingOrders: ORDER[];
   selectedOrder: ORDER | null;
 }
 
 interface OrderActions {
   getOrdersFetch: () => Promise<API_RESPONSE<ORDER[]>>;
+  getPendingOrdersFetch: () => Promise<API_RESPONSE<ORDER[]>>;
   getOrderByIdFetch: (id: string) => Promise<API_RESPONSE<ORDER>>;
   createOrderFetch: (orderData: CreateOrderFormValues) => Promise<API_RESPONSE<ORDER>>;
   updateOrderFetch: (id: string, orderData: UpdateOrderFormValues) => Promise<API_RESPONSE<ORDER>>;
@@ -27,6 +29,7 @@ export type OrderStore = OrderState & OrderActions;
 
 export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
   orders: [],
+  pendingOrders: [],
   selectedOrder: null,
 
   getOrdersFetch: async () => {
@@ -50,6 +53,15 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
     if (response.success && response.data) {
       const currentOrders = get().orders;
       set({ orders: [...currentOrders, response.data] });
+    }
+    return response;
+  },
+
+  getPendingOrdersFetch: async () => {
+    const response = await getOrders();
+    if (response.success && response.data) {
+      const pendingOrders = response.data.filter(order => order.status === 'pending');
+      set({ pendingOrders: pendingOrders });
     }
     return response;
   },

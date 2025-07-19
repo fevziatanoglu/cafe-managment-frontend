@@ -53,3 +53,16 @@ export const deleteOrder = async (id: string): Promise<API_RESPONSE<ORDER>> => {
     return handleApiError(error);
   }
 };
+
+
+// Get waiting orders
+export const getPendingOrders = async (): Promise<API_RESPONSE<ORDER[]>> => {
+  try {
+    const response = await requestApi.get('/orders/pending');
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
+

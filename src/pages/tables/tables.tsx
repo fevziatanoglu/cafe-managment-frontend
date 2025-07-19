@@ -12,7 +12,7 @@ import { TableFilters } from "../../components/Tables/TableFilters";
 
 // Main TablesPage Component
 export default function Tables() {
-  const { tables, getTablesFetch } = useStore();
+  const { tables, getTablesFetch , getPendingOrdersFetch } = useStore();
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'empty' | 'occupied' | 'reserved'>('all');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -28,19 +28,18 @@ export default function Tables() {
     { _id: '8', number: '8', status: 'occupied', adminId: 'admin1' }
   ];
 
-  // Use dummy data if no tables from store
   const displayTables = tables.length > 0 ? tables : dummyTables;
 
   useEffect(() => {
     const fetchTables = async () => {
       setIsLoading(true);
       await getTablesFetch();
+      await getPendingOrdersFetch()
       setIsLoading(false);
     };
     fetchTables();
-  }, [getTablesFetch]);
+  }, [getTablesFetch ,getPendingOrdersFetch ]);
 
-  // Filter logic
   const filteredTables = displayTables.filter((table: TABLE) => {
     const matchesStatus = selectedStatus === 'all' || table.status === selectedStatus;
     return matchesStatus;

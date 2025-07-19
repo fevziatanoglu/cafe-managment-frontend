@@ -1,6 +1,7 @@
 import type { StateCreator } from "zustand";
 import type { API_RESPONSE } from "../../types";
 import type { TABLE } from "../../types/Table";
+import type { TableFormData } from "../../validations/tableSchema";
 import {
   getTables,
   getTableById,
@@ -17,8 +18,8 @@ interface TableState {
 interface TableActions {
   getTablesFetch: () => Promise<API_RESPONSE<TABLE[]>>;
   getTableByIdFetch: (id: string) => Promise<API_RESPONSE<TABLE>>;
-  createTableFetch: (tableData: Omit<TABLE, "_id" | "adminId">) => Promise<API_RESPONSE<TABLE>>;
-  updateTableFetch: (id: string, tableData: Partial<TABLE>) => Promise<API_RESPONSE<TABLE>>;
+  createTableFetch: (tableData: TableFormData) => Promise<API_RESPONSE<TABLE>>;
+  updateTableFetch: (id: string, tableData: TableFormData) => Promise<API_RESPONSE<TABLE>>;
   deleteTableFetch: (id: string) => Promise<API_RESPONSE<TABLE>>;
   setSelectedTable: (table: TABLE | null) => void;
 }

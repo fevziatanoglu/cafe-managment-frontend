@@ -6,8 +6,8 @@ import ErrorBox from '../Auth/ErrorBox';
 import { createOrderSchema, type CreateOrderFormValues } from '../../validations/orderSchema';
 import type { ORDER } from '../../types/Order';
 
-export default function OrderForm({ order }: {order?: ORDER}) {
-  const { createOrderFetch, updateOrderFetch, closeModal } = useStore();
+export default function OrderForm({ order }: { order?: ORDER }) {
+  const { createOrderFetch, updateOrderFetch, closeModal, tables } = useStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -74,18 +74,26 @@ export default function OrderForm({ order }: {order?: ORDER}) {
         <label className="block text-sm font-medium text-amber-700 mb-2">
           Table Number
         </label>
-        <input
+        <select
           {...register('tableId')}
-          type="text"
-          placeholder="Enter table number"
           className={`
-            w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
-            ${errors.tableId
+      w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200
+      ${errors.tableId
               ? 'border-red-500 bg-red-50'
               : 'border-amber-300 hover:border-amber-400 focus:bg-white'
             }
-          `}
-        />
+    `}
+          defaultValue={order?.tableId || ''}
+        >
+          <option value="" disabled>
+            Select a table
+          </option>
+          {tables.map((table) => (
+            <option key={table._id} value={table._id}>
+              Table {table.number} ({table.status})
+            </option>
+          ))}
+        </select>
         {errors.tableId && (
           <p className="mt-1 text-sm text-red-600 flex items-center">
             <span className="mr-1">⚠️</span>

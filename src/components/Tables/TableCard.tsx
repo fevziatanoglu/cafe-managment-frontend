@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Coffee, Edit2, Trash2, MoreVertical } from 'lucide-react';
-import type { TABLE } from '../../types/Table';
+import type { TABLE, TABLE_STATUS } from '../../types/Table';
 import useStore from '../../store';
 import TableForm from './TableForm';
 
@@ -9,9 +9,19 @@ interface TableCardProps {
 }
 
 export default function TableCard({ table }: TableCardProps) {
-  const {openModal} = useStore();
-  const { deleteTableFetch } = useStore();
+  const { openModal , deleteTableFetch , pendingOrders , updateTableFetch } = useStore();
   const [showActions, setShowActions] = useState(false);
+
+  const getMinutesAgo = (dateString: string) => {
+    const orderDate = new Date(dateString.replace(' ', 'T'));
+    const now = new Date();
+    const diffMs = now.getTime() - orderDate.getTime();
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return 'just now';
+    if (diffMin === 1) return '1 minute ago';
+    return `${diffMin} minutes ago`;
+  }
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -69,8 +79,11 @@ export default function TableCard({ table }: TableCardProps) {
     openModal(<TableForm table={table} />, 'Edit Table');
   };
 
-  const handleStatusChange = async (newStatus: string) => {
-    console.log(`Changing status to: ${newStatus}`);
+  const handleStatusChange = async (newStatus: TABLE_STATUS) => {
+    await updateTableFetch(table._id, {
+      status: newStatus,
+      number: table.number
+    });
   };
 
 
@@ -85,11 +98,11 @@ export default function TableCard({ table }: TableCardProps) {
           >
             <MoreVertical className="h-4 w-4 text-gray-600" />
           </button>
-          
+
           {showActions && (
             <div className="absolute top-12 right-0 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-10 min-w-[120px]">
               <button
-                onClick={()=> openModal(<TableForm table={table} /> , 'Edit Table')}
+                onClick={() => openModal(<TableForm table={table} />, 'Edit Table')}
                 className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-amber-50 flex items-center space-x-2"
               >
                 <Edit2 className="h-4 w-4" />
@@ -179,6 +192,25 @@ export default function TableCard({ table }: TableCardProps) {
           >
             Click to edit table details
           </button>
+        </div>
+        <div className="mt-4">
+          <h4 className="font-semibold text-amber-700 mb-2">Orders</h4>
+          {pendingOrders.length === 0 ? (
+            <div className="text-sm text-gray-400">No orders for this table.</div>
+          ) : (
+            <ul className="space-y-1">
+              {pendingOrders.map(order => (
+                <li key={order._id} className="text-xs text-gray-700 flex justify-between">
+                  <span>
+                    Order - {order.status}
+                  </span>
+                  <span>
+                    {getMinutesAgo(order.createdAt)} | ₺{order.total}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
 
