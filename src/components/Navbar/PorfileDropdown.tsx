@@ -1,11 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { ChevronDown, User, Settings, LogOut } from 'lucide-react';
+import { ChevronDown, User, Settings } from 'lucide-react';
 import useStore from '../../store';
+import LogoutButton from '../Auth/LogoutButton';
 
 export default function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { user, logoutFetch } = useStore();
+  const { user } = useStore();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -18,10 +19,6 @@ export default function ProfileDropdown() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    logoutFetch();
-    setIsOpen(false);
-  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -43,19 +40,13 @@ export default function ProfileDropdown() {
             <p className="text-xs text-amber-600">{user?.email}</p>
             <p className="text-xs text-amber-500 capitalize">{user?.role}</p>
           </div>
-          
+
           <button className="w-full flex items-center space-x-2 px-4 py-2 text-amber-700 hover:bg-amber-50 transition-colors">
             <Settings className="h-4 w-4" />
             <span>Settings</span>
           </button>
-          
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 transition-colors"
-          >
-            <LogOut className="h-4 w-4" />
-            <span>Logout</span>
-          </button>
+
+          <LogoutButton />
         </div>
       )}
     </div>

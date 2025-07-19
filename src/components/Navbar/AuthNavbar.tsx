@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Coffee, Menu, X, User, LogOut, Settings } from 'lucide-react';
+import { Coffee, Menu, X, User, Settings } from 'lucide-react';
 import useStore from '../../store';
 import ProfileDropdown from './PorfileDropdown';
+import LogoutButton from '../Auth/LogoutButton';
 
 export default function AuthNavbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user } = useStore();
 
   const navigationLinks = [
-    { name: 'Dashboard', href: '/dashboard' },
+    ...(user?.role === 'admin' ? [{ name: 'Dashboard', href: '/dashboard' }, { name: 'Staff', href: '/staff' }, { name: 'Menu', href: '/menu' },
+    ] : []),
     { name: 'Orders', href: '/orders' },
     { name: 'Tables', href: '/tables' },
-    ...(user?.role === 'admin' ? [{ name: 'Menu', href: '/menu' }] : []),
   ];
 
   return (
@@ -68,7 +69,7 @@ export default function AuthNavbar() {
                   {link.name}
                 </Link>
               ))}
-              
+
               {/* Mobile Profile Section */}
               <div className="pt-4 border-t border-amber-100">
                 <div className="flex items-center space-x-3 mb-4">
@@ -80,16 +81,13 @@ export default function AuthNavbar() {
                     <p className="text-xs text-amber-600 capitalize">{user?.role}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-col space-y-2">
                   <button className="flex items-center space-x-2 text-amber-700 hover:text-amber-900 transition-colors">
                     <Settings className="h-4 w-4" />
                     <span>Settings</span>
                   </button>
-                  <button className="flex items-center space-x-2 text-red-600 hover:text-red-700 transition-colors">
-                    <LogOut className="h-4 w-4" />
-                    <span>Logout</span>
-                  </button>
+                 <LogoutButton />
                 </div>
               </div>
             </div>
