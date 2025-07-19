@@ -1,46 +1,29 @@
 import { useEffect, useState } from "react";
 import useStore from "../../store";
-import type { TABLE } from "../../types/Table";
+import type { TABLE_WITH_ORDERS } from "../../types/Table";
 import TableHeader from "../../components/Tables/TableHeader";
 import TableStats from "../../components/Tables/TableStats";
 import TableCard from "../../components/Tables/TableCard";
 import { TableFilters } from "../../components/Tables/TableFilters";
 
 
-
-
-
 // Main TablesPage Component
 export default function Tables() {
-  const { tables, getTablesFetch , getPendingOrdersFetch } = useStore();
+  const { getTablesWithOrders, tablesWithOrders } = useStore();
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'empty' | 'occupied' | 'reserved'>('all');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Dummy data for demonstration
-  const dummyTables: TABLE[] = [
-    { _id: '1', number: '1', status: 'occupied', adminId: 'admin1' },
-    { _id: '2', number: '2', status: 'empty', adminId: 'admin1' },
-    { _id: '3', number: '3', status: 'reserved', adminId: 'admin1' },
-    { _id: '4', number: '4', status: 'empty', adminId: 'admin1' },
-    { _id: '5', number: '5', status: 'occupied', adminId: 'admin1' },
-    { _id: '6', number: '6', status: 'reserved', adminId: 'admin1' },
-    { _id: '7', number: '7', status: 'empty', adminId: 'admin1' },
-    { _id: '8', number: '8', status: 'occupied', adminId: 'admin1' }
-  ];
-
-  const displayTables = tables.length > 0 ? tables : dummyTables;
 
   useEffect(() => {
     const fetchTables = async () => {
       setIsLoading(true);
-      await getTablesFetch();
-      await getPendingOrdersFetch()
+      await getTablesWithOrders();
       setIsLoading(false);
     };
     fetchTables();
-  }, [getTablesFetch ,getPendingOrdersFetch ]);
+  }, [getTablesWithOrders]);
 
-  const filteredTables = displayTables.filter((table: TABLE) => {
+  const filteredTables = (tablesWithOrders || []).filter((table: TABLE_WITH_ORDERS) => {
     const matchesStatus = selectedStatus === 'all' || table.status === selectedStatus;
     return matchesStatus;
   });
@@ -51,12 +34,12 @@ export default function Tables() {
       <TableHeader />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <TableStats tables={displayTables} />
-        
+        <TableStats tables={tablesWithOrders || []} />
+
         <TableFilters
           selectedStatus={selectedStatus}
           onStatusChange={setSelectedStatus}
-          tables={displayTables}
+          tables={tablesWithOrders || []}
         />
 
         {isLoading ? (

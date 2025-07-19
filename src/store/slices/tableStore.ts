@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 import type { API_RESPONSE } from "../../types";
-import type { TABLE } from "../../types/Table";
+import type { TABLE, TABLE_WITH_ORDERS } from "../../types/Table";
 import type { TableFormData } from "../../validations/tableSchema";
 import {
   getTables,
@@ -8,10 +8,12 @@ import {
   createTable,
   updateTable,
   deleteTable,
+  getTablesWithOrders,
 } from "../../api/tablesService";
 
 interface TableState {
   tables: TABLE[];
+  tablesWithOrders?: TABLE_WITH_ORDERS[];
   selectedTable: TABLE | null;
 }
 
@@ -22,12 +24,14 @@ interface TableActions {
   updateTableFetch: (id: string, tableData: TableFormData) => Promise<API_RESPONSE<TABLE>>;
   deleteTableFetch: (id: string) => Promise<API_RESPONSE<TABLE>>;
   setSelectedTable: (table: TABLE | null) => void;
+  getTablesWithOrders: () => Promise<API_RESPONSE<TABLE_WITH_ORDERS[]>>;
 }
 
 export type TableStore = TableState & TableActions;
 
 export const createTableSlice: StateCreator<TableStore> = (set, get) => ({
   tables: [],
+  tablesWithOrders: [],
   selectedTable: null,
 
   getTablesFetch: async () => {
@@ -49,7 +53,13 @@ export const createTableSlice: StateCreator<TableStore> = (set, get) => ({
   createTableFetch: async (tableData) => {
     const response = await createTable(tableData);
     if (response.success && response.data) {
-      set({ tables: [...get().tables, response.data] });
+      set({
+        tables: [...get().tables, response.data],
+        tablesWithOrders: [
+          ...(get().tablesWithOrders || []),
+          { ...response.data, orders: [] },
+        ],
+      });
     }
     return response;
   },
@@ -58,7 +68,9 @@ export const createTableSlice: StateCreator<TableStore> = (set, get) => ({
     const response = await updateTable(id, tableData);
     if (response.success && response.data) {
       set({
-        tables: get().tables.map((t) => (t._id === id ? response.data! : t)),
+        tablesWithOrders: get().tablesWithOrders?.map((t) => 
+          t._id === id ? { ...response.data!, orders: t.orders } : t
+        ),
         selectedTable: response.data,
       });
     }
@@ -79,4 +91,12 @@ export const createTableSlice: StateCreator<TableStore> = (set, get) => ({
   setSelectedTable: (table) => {
     set({ selectedTable: table });
   },
+
+  getTablesWithOrders: async () => {
+    const response = await getTablesWithOrders();
+    if (response.success && response.data) {
+      set({ tablesWithOrders: response.data });
+    }
+    return response;
+  }
 });

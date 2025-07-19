@@ -1,5 +1,5 @@
 import type { API_RESPONSE } from '../types';
-import type { TABLE } from '../types/Table';
+import type { TABLE, TABLE_WITH_ORDERS } from '../types/Table';
 import requestApi from '../utils/api';
 import handleApiError from '../utils/apiErrorHandler';
 import type { TableFormData } from '../validations/tableSchema';
@@ -53,3 +53,12 @@ export const deleteTable = async (id: string): Promise<API_RESPONSE<TABLE>> => {
     return handleApiError(error);
   }
 };
+
+export const getTablesWithOrders = async (): Promise<API_RESPONSE<TABLE_WITH_ORDERS[]>> => {
+  try {
+    const response = await requestApi.get('/tables/with-orders');
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+}

@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Coffee, Edit2, Trash2, MoreVertical } from 'lucide-react';
-import type { TABLE, TABLE_STATUS } from '../../types/Table';
+import type { TABLE_STATUS, TABLE_WITH_ORDERS } from '../../types/Table';
 import useStore from '../../store';
 import TableForm from './TableForm';
 
 interface TableCardProps {
-  table: TABLE;
+  table: TABLE_WITH_ORDERS;
 }
 
 export default function TableCard({ table }: TableCardProps) {
-  const { openModal , deleteTableFetch , pendingOrders , updateTableFetch } = useStore();
+  const { openModal , deleteTableFetch , updateTableFetch } = useStore();
   const [showActions, setShowActions] = useState(false);
 
   const getMinutesAgo = (dateString: string) => {
@@ -195,11 +195,11 @@ export default function TableCard({ table }: TableCardProps) {
         </div>
         <div className="mt-4">
           <h4 className="font-semibold text-amber-700 mb-2">Orders</h4>
-          {pendingOrders.length === 0 ? (
+          {table.orders.length === 0 ? (
             <div className="text-sm text-gray-400">No orders for this table.</div>
           ) : (
             <ul className="space-y-1">
-              {pendingOrders.map(order => (
+              {table.orders.map(order => (
                 <li key={order._id} className="text-xs text-gray-700 flex justify-between">
                   <span>
                     Order - {order.status}
