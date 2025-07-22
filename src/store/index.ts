@@ -9,9 +9,10 @@ import { devtools } from "zustand/middleware";
 import { createStaffSlice, type StaffStore } from "./slices/staffStore";
 import { createOrderSlice, type OrderStore } from "./slices/orderStore";
 import { createTableSlice, type TableStore } from "./slices/tableStore";
+import { createProductSlice, type ProductStore } from "./slices/productStore";
 
 
-export type Store = AuthStore & ModalStore & StaffStore & OrderStore & TableStore;
+export type Store = AuthStore & ModalStore & StaffStore & OrderStore & TableStore & ProductStore;
 
 export const useStore = create<Store>()(
   devtools((set, get, api) => ({
@@ -19,7 +20,8 @@ export const useStore = create<Store>()(
     ...createModalSlice(set, get, api),
     ...createStaffSlice(set, get, api),
     ...createOrderSlice(set, get, api),
-    ...createTableSlice(set, get, api)
+    ...createTableSlice(set, get, api),
+    ...createProductSlice(set, get, api)
   }),{name: "AppStore"})
 );
 export default useStore;
