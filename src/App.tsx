@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./components/Landing/LandingPage";
 import { Dashboard } from "./components/Dashboard";
-import { Menu } from "./components/Menu/Menu";
 import { PublicMenu } from "./components/PublicMenu/PublicMenu";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
@@ -12,6 +11,7 @@ import AdminLayout from "./layouts/AdminLayout";
 import Staff from "./pages/staff/Staff";
 import Orders from "./pages/orders/orders";
 import Tables from "./pages/tables/tables";
+import Menu from "./pages/menu/menu";
 
 function App() {
   return (
