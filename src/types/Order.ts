@@ -1,10 +1,9 @@
+import type { PRODUCT } from "./Product";
+
 export interface ORDER {
   _id: string;
   tableId: string;
-  items: {
-    productId: string;
-    quantity: number;
-  }[];
+  items: ORDER_ITEM[];
   status: ORDER_STATUS;
   total: number;
   createdBy: string;
@@ -14,4 +13,8 @@ export interface ORDER {
 
 export type ORDER_STATUS = 'pending' | 'preparing' | 'served' | 'paid'; 
 
-
+export type ORDER_ITEM = {
+  product: PRODUCT;      
+  quantity: number;
+  price: number;        
+};

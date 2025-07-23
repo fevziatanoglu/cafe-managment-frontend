@@ -13,6 +13,7 @@ interface OrderState {
   orders: ORDER[];
   pendingOrders: ORDER[];
   selectedOrder: ORDER | null;
+  isOrdersLoading: boolean;
 }
 
 interface OrderActions {
@@ -31,42 +32,52 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
   orders: [],
   pendingOrders: [],
   selectedOrder: null,
+  isOrdersLoading: false,
 
   getOrdersFetch: async () => {
+    set({ isOrdersLoading: true });
     const response = await getOrders();
     if (response.success && response.data) {
       set({ orders: response.data });
     }
+    set({ isOrdersLoading: false });
     return response;
   },
 
   getOrderByIdFetch: async (id: string) => {
+    set({ isOrdersLoading: true });
     const response = await getOrderById(id);
     if (response.success && response.data) {
       set({ selectedOrder: response.data });
     }
+    set({ isOrdersLoading: false });
     return response;
   },
 
   createOrderFetch: async (orderData) => {
+    set({ isOrdersLoading: true });
     const response = await createOrder(orderData);
     if (response.success && response.data) {
       const currentOrders = get().orders;
       set({ orders: [...currentOrders, response.data] });
     }
+    set({ isOrdersLoading: false });
     return response;
   },
 
   getPendingOrdersFetch: async () => {
+    set({ isOrdersLoading: true });
     const response = await getOrders();
     if (response.success && response.data) {
       const pendingOrders = response.data.filter(order => order.status === 'pending');
       set({ pendingOrders: pendingOrders });
     }
+    set({ isOrdersLoading: false });
     return response;
   },
 
   updateOrderFetch: async (id, orderData) => {
+    set({ isOrdersLoading: true });
     const response = await updateOrder(id, orderData);
     if (response.success && response.data) {
       const currentOrders = get().orders;
@@ -75,16 +86,19 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
       );
       set({ orders: updatedOrders, selectedOrder: response.data });
     }
+    set({ isOrdersLoading: false });
     return response;
   },
 
   deleteOrderFetch: async (id) => {
+    set({ isOrdersLoading: true });
     const response = await deleteOrder(id);
     if (response.success) {
       const currentOrders = get().orders;
       const filteredOrders = currentOrders.filter(order => order._id !== id);
       set({ orders: filteredOrders, selectedOrder: null });
     }
+    set({ isOrdersLoading: false });
     return response;
   },
 

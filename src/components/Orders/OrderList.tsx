@@ -1,34 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useStore from '../../store';
 import { Coffee } from 'lucide-react';
 import OrderItem from './OrderItem';
 import OrderListFilters from './OrderFilters';
 import OrderListStatusBar from './OrderListStatusBar';
 import type { ORDER, ORDER_STATUS } from '../../types';
+
 export default function OrderList() {
-  const { orders, getOrdersFetch } = useStore();
+  const { orders, isOrdersLoading } = useStore();
 
   // Local filter states
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<ORDER_STATUS | null>(null);
   const [sortBy, setSortBy] = useState<'createdAt' | 'total' | 'tableId' | 'status'>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const loadOrders = async () => {
-      setIsLoading(true);
-      await getOrdersFetch();
-      setIsLoading(false);
-    };
-    loadOrders();
-  }, [getOrdersFetch]);
 
   // Filter and sort logic
   let filteredOrders = orders.filter(order => {
     const matchesSearch =
       order.tableId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.createdBy.toLowerCase().includes(searchTerm.toLowerCase());
+      (order.createdBy?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
     const matchesStatus =
       !selectedStatus
         ? true
@@ -94,8 +85,8 @@ export default function OrderList() {
         </p>
       </div>
 
-      {/* Loading State */}
-      {isLoading ? (
+      {/* Order List */}
+      {isOrdersLoading ? (
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
           <span className="ml-2 text-amber-600">Loading orders...</span>
