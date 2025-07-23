@@ -7,7 +7,6 @@ import {
   deleteProduct,
   getProductById,
   getProducts,
-  getProductsByMenuId,
 } from "../../api/productService";
 
 interface ProductState {
@@ -21,7 +20,6 @@ interface ProductActions {
   deleteProductFetch: (id: string) => Promise<API_RESPONSE<PRODUCT>>;
   getProductByIdFetch: (id: string) => Promise<API_RESPONSE<PRODUCT>>;
   getProductsFetch: () => Promise<API_RESPONSE<PRODUCT[]>>;
-  getProductsByMenuIdFetch: (menuId: string) => Promise<API_RESPONSE<PRODUCT[]>>;
   setSelectedProduct: (product: PRODUCT | null) => void;
 }
 
@@ -71,14 +69,6 @@ export const createProductSlice: StateCreator<ProductStore> = (set, get) => ({
 
   getProductsFetch: async () => {
     const response = await getProducts();
-    if (response.success && response.data) {
-      set({ products: response.data });
-    }
-    return response;
-  },
-
-  getProductsByMenuIdFetch: async (menuId) => {
-    const response = await getProductsByMenuId(menuId);
     if (response.success && response.data) {
       set({ products: response.data });
     }

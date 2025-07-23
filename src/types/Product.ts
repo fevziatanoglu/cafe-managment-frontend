@@ -6,7 +6,6 @@ export interface PRODUCT {
   category?: string;
   isActive: boolean;
   adminId: string;
-  menuId: string;
   createdAt: string;
   updatedAt: string;
 }

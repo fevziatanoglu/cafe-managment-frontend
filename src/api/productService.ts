@@ -61,15 +61,3 @@ export const getProductById = async (
     return handleApiError(error);
   }
 };
-
-// Get Products By Menu ID
-export const getProductsByMenuId = async (
-  menuId: string
-): Promise<API_RESPONSE<PRODUCT[]>> => {
-  try {
-    const response = await requestApi.get(`/products/menu/${menuId}`);
-    return response.data;
-  } catch (error) {
-    return handleApiError(error);
-  }
-};
