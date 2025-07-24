@@ -14,6 +14,7 @@ export interface ORDER {
 export type ORDER_STATUS = 'pending' | 'preparing' | 'served' | 'paid'; 
 
 export type ORDER_ITEM = {
+  productId: string;
   product: PRODUCT;      
   quantity: number;
   price: number;        
