@@ -89,16 +89,13 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
     set({ isOrdersLoading: false });
     return response;
   },
-
   deleteOrderFetch: async (id) => {
-    set({ isOrdersLoading: true });
     const response = await deleteOrder(id);
     if (response.success) {
       const currentOrders = get().orders;
       const filteredOrders = currentOrders.filter(order => order._id !== id);
       set({ orders: filteredOrders, selectedOrder: null });
     }
-    set({ isOrdersLoading: false });
     return response;
   },
 

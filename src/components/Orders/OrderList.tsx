@@ -92,9 +92,9 @@ export default function OrderList() {
           <span className="ml-2 text-amber-600">Loading orders...</span>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {filteredOrders.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="col-span-full text-center py-12">
               <Coffee className="h-16 w-16 text-amber-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-amber-800 mb-2">No orders found</h3>
               <p className="text-amber-600 mb-4">
