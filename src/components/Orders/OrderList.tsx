@@ -3,7 +3,6 @@ import useStore from '../../store';
 import { Coffee } from 'lucide-react';
 import OrderItem from './OrderItem';
 import OrderListFilters from './OrderFilters';
-import OrderListStatusBar from './OrderListStatusBar';
 import type { ORDER, ORDER_STATUS } from '../../types';
 import OrderItemSkeleton from './OrderItemSkeleton';
 
@@ -42,15 +41,6 @@ export default function OrderList() {
     return 0;
   });
 
-  // Status options for filter
-  const statusOptions = [
-    { value: 'all', label: 'All', count: orders.length },
-    { value: 'pending', label: 'Pending', count: orders.filter(o => o.status === 'pending').length },
-    { value: 'preparing', label: 'Preparing', count: orders.filter(o => o.status === 'preparing').length },
-    { value: 'served', label: 'Served', count: orders.filter(o => o.status === 'served').length },
-    { value: 'paid', label: 'Paid', count: orders.filter(o => o.status === 'paid').length }
-  ];
-
   // Sort options
   const sortOptions = [
     { value: 'createdAt', label: 'Order Date' },
@@ -70,13 +60,9 @@ export default function OrderList() {
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}
         sortOptions={sortOptions}
-      />
-
-      {/* Status Filter Buttons */}
-      <OrderListStatusBar
         selectedStatus={selectedStatus === null ? 'all' : selectedStatus}
-        setSelectedStatus={status => setSelectedStatus(status === 'all' ? null : status)}
-        statusOptions={statusOptions}
+        onStatusChange={status => setSelectedStatus(status === 'all' ? null : status)}
+        orders={orders}
       />
 
       {/* Order Count */}

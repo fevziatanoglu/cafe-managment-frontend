@@ -38,6 +38,7 @@ function getHeaderBackgroundColor(status: string) {
             return 'bg-gradient-to-r from-amber-50 to-orange-50';
     }
 }
+
 const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
     const { deleteOrderFetch, openModal, updateOrderFetch } = useStore();
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -64,7 +65,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
     }
 
     return (
-        <div className="flex flex-col justify-between  bg-white rounded-lg shadow-lg border border-amber-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+        <div className="bg-white rounded-lg shadow-lg border border-amber-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
             {/* Receipt Header - Paper Style */}
             <div className={`${getHeaderBackgroundColor(order.status)} px-6 py-4 border-b-2 border-dashed border-amber-300 relative`}>
                 {/* Perforated edge effect */}
@@ -100,8 +101,8 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                 </div>
             </div>
 
-            {/* Receipt Body */}
-            <div className="px-6 py-4 font-mono text-sm bg-amber-25">
+            {/* Receipt Body - Flex grow to push actions to bottom */}
+            <div className="px-6 py-4 font-mono text-sm bg-amber-25 flex-grow">
                 {/* Table & Waiter Info */}
                 <div className="space-y-2 mb-4">
                     <div className="flex justify-between">
@@ -166,54 +167,54 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                         </span>
                     </div>
                 </div>
+            </div>
 
-                {/* Actions - Outside the receipt style */}
-                <div className="border-t-2 border-amber-200 pt-4 -mx-6 px-6 bg-amber-50 h-full">
-                    <div className="flex flex-row gap-2 justify-between w-full">
-                        <button
-                            onClick={() => handleAction('pending')}
-                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
-                            title="Set Pending"
-                            disabled={order.status === 'pending'}
-                        >
-                            <Clock className="h-3 w-3" />
-                            <span>Pending</span>
-                        </button>
-                        <button
-                            onClick={() => handleAction('preparing')}
-                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
-                            title="Set Preparing"
-                            disabled={order.status === 'preparing'}
-                        >
-                            <ChefHat className="h-3 w-3" />
-                            <span>Preparing</span>
-                        </button>
-                        <button
-                            onClick={() => handleAction('served')}
-                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
-                            title="Set Served"
-                            disabled={order.status === 'served'}
-                        >
-                            <CheckCircle className="h-3 w-3" />
-                            <span>Served</span>
-                        </button>
-                        <button
-                            onClick={() => openModal(<OrderForm order={order} />, "Edit Order")}
-                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-amber-500 text-white rounded-md hover:bg-amber-600 transition-colors hover:cursor-pointer"
-                            title="Edit order"
-                        >
-                            <Edit className="h-3 w-3" />
-                            <span>Edit</span>
-                        </button>
-                        <button
-                            onClick={() => handleAction('delete')}
-                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors hover:cursor-pointer"
-                            title="Delete order"
-                        >
-                            <Trash2 className="h-3 w-3" />
-                            <span>Delete</span>
-                        </button>
-                    </div>
+            {/* Actions - Always at bottom */}
+            <div className="border-t-2 border-amber-200 pt-4 px-6 bg-amber-50 mt-auto">
+                <div className="flex flex-row gap-2 justify-between w-full pb-4">
+                    <button
+                        onClick={() => handleAction('pending')}
+                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
+                        title="Set Pending"
+                        disabled={order.status === 'pending'}
+                    >
+                        <Clock className="h-3 w-3" />
+                        <span>Pending</span>
+                    </button>
+                    <button
+                        onClick={() => handleAction('preparing')}
+                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
+                        title="Set Preparing"
+                        disabled={order.status === 'preparing'}
+                    >
+                        <ChefHat className="h-3 w-3" />
+                        <span>Preparing</span>
+                    </button>
+                    <button
+                        onClick={() => handleAction('served')}
+                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
+                        title="Set Served"
+                        disabled={order.status === 'served'}
+                    >
+                        <CheckCircle className="h-3 w-3" />
+                        <span>Served</span>
+                    </button>
+                    <button
+                        onClick={() => openModal(<OrderForm order={order} />, "Edit Order")}
+                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-amber-500 text-white rounded-md hover:bg-amber-600 transition-colors hover:cursor-pointer"
+                        title="Edit order"
+                    >
+                        <Edit className="h-3 w-3" />
+                        <span>Edit</span>
+                    </button>
+                    <button
+                        onClick={() => handleAction('delete')}
+                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors hover:cursor-pointer"
+                        title="Delete order"
+                    >
+                        <Trash2 className="h-3 w-3" />
+                        <span>Delete</span>
+                    </button>
                 </div>
             </div>
         </div>
