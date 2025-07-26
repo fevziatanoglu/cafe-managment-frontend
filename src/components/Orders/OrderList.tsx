@@ -5,6 +5,7 @@ import OrderItem from './OrderItem';
 import OrderListFilters from './OrderFilters';
 import OrderListStatusBar from './OrderListStatusBar';
 import type { ORDER, ORDER_STATUS } from '../../types';
+import OrderItemSkeleton from './OrderItemSkeleton';
 
 export default function OrderList() {
   const { orders, isOrdersLoading } = useStore();
@@ -87,12 +88,13 @@ export default function OrderList() {
 
       {/* Order List */}
       {isOrdersLoading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-600"></div>
-          <span className="ml-2 text-amber-600">Loading orders...</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {[1, 2, 3].map((index) => (
+            <OrderItemSkeleton key={index} />
+          ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols- gap-4">
           {filteredOrders.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <Coffee className="h-16 w-16 text-amber-300 mx-auto mb-4" />

@@ -77,7 +77,6 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
   },
 
   updateOrderFetch: async (id, orderData) => {
-    set({ isOrdersLoading: true });
     const response = await updateOrder(id, orderData);
     if (response.success && response.data) {
       const currentOrders = get().orders;
@@ -86,7 +85,6 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
       );
       set({ orders: updatedOrders, selectedOrder: response.data });
     }
-    set({ isOrdersLoading: false });
     return response;
   },
   deleteOrderFetch: async (id) => {

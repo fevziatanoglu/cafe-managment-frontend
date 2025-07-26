@@ -1,7 +1,9 @@
-import { Edit, Trash2, Clock, User, MapPin } from 'lucide-react';
+import { Edit, Trash2, Clock, ChefHat, CheckCircle } from 'lucide-react';
 import type { ORDER } from '../../types/Order';
 import useStore from '../../store';
 import OrderForm from './OrderForm';
+import { useState } from 'react';
+import OrderItemSkeleton from './OrderItemSkeleton';
 
 interface OrderItemProps {
     order: ORDER;
@@ -22,122 +24,196 @@ function getStatusBadgeColor(status: string) {
     }
 }
 
+function getHeaderBackgroundColor(status: string) {
+    switch (status) {
+        case 'pending':
+            return 'bg-gradient-to-r from-yellow-50 to-yellow-100';
+        case 'preparing':
+            return 'bg-gradient-to-r from-blue-50 to-blue-100';
+        case 'served':
+            return 'bg-gradient-to-r from-green-100 to-green-200';
+        case 'paid':
+            return 'bg-gradient-to-r from-gray-50 to-gray-100';
+        default:
+            return 'bg-gradient-to-r from-amber-50 to-orange-50';
+    }
+}
 const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
-    const { deleteOrderFetch, openModal } = useStore();
+    const { deleteOrderFetch, openModal, updateOrderFetch } = useStore();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const handleAction = async (action: 'pending' | 'preparing' | 'served' | 'delete') => {
+        setIsLoading(true);
+        try {
+            if (action === 'delete') {
+                await deleteOrderFetch(order._id);
+            } else {
+                await updateOrderFetch(order._id, { status: action });
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     // Generate order number from _id (last 8 characters)
     const orderNumber = `#${order._id.slice(-8).toUpperCase()}`;
 
+    // Show skeleton when loading
+    if (isLoading) {
+        return <OrderItemSkeleton />;
+    }
+
     return (
-        <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow duration-200">
-            {/* Header - Receipt Style */}
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 px-6 py-4 border-b border-dashed border-gray-300">
-                <div className="flex items-center justify-between">
+        <div className="flex flex-col justify-between  bg-white rounded-lg shadow-lg border border-amber-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+            {/* Receipt Header - Paper Style */}
+            <div className={`${getHeaderBackgroundColor(order.status)} px-6 py-4 border-b-2 border-dashed border-amber-300 relative`}>
+                {/* Perforated edge effect */}
+                <div className="absolute left-0 top-0 w-full h-2 bg-repeat-x"
+                    style={{
+                        backgroundImage: `radial-gradient(circle at 10px center, transparent 4px, transparent 4px)`
+                    }}>
+                </div>
+
+                <div className="flex items-center justify-between pt-2">
                     <div className="flex items-center space-x-4">
-                        <div className="text-lg font-bold text-gray-800">
+                        <div className="text-xl font-bold text-amber-800 font-mono">
                             {orderNumber}
                         </div>
-                        <div className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusBadgeColor(order.status)}`}>
+                        <div className={`px-4 py-1 rounded-full text-xs font-semibold border-2 ${getStatusBadgeColor(order.status)}`}>
                             {order.status.toUpperCase()}
                         </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <Clock className="h-4 w-4 text-gray-500" />
-                        <span className="text-sm text-gray-600">
-                            {new Date(order.createdAt).toLocaleTimeString('en-US', { 
-                                hour: '2-digit', 
-                                minute: '2-digit' 
-                            })}
+                    <div className="text-right">
+                        <div className="flex items-center space-x-2 text-amber-700">
+                            <Clock className="h-4 w-4" />
+                            <span className="text-sm font-mono">
+                                {new Date(order.createdAt).toLocaleTimeString('en-US', {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })}
+                            </span>
+                        </div>
+                        <span className="text-xs text-amber-600">
+                            {Math.floor((Date.now() - new Date(order.createdAt).getTime()) / 60000)} min ago
                         </span>
                     </div>
                 </div>
             </div>
 
-            {/* Order Details */}
-            <div className="px-6 py-4">
+            {/* Receipt Body */}
+            <div className="px-6 py-4 font-mono text-sm bg-amber-25">
                 {/* Table & Waiter Info */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="flex items-center space-x-2">
-                        <MapPin className="h-4 w-4 text-amber-600" />
-                        <span className="text-sm font-medium text-gray-700">
-                            {order.tableName || `Table ${order.tableId}`}
-                        </span>
+                <div className="space-y-2 mb-4">
+                    <div className="flex justify-between">
+                        <span className="text-amber-700">TABLE:</span>
+                        <span className="font-semibold text-amber-900">{order.tableName || `Table ${order.tableId}`}</span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <User className="h-4 w-4 text-amber-600" />
-                        <span className="text-sm text-gray-600">
-                            {order.waiterName || 'Unknown Waiter'}
-                        </span>
+                    <div className="flex justify-between">
+                        <span className="text-amber-700">WAITER:</span>
+                        <span className="font-semibold text-amber-900">{order.waiterName || 'Unknown'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                        <span className="text-amber-700">DATE:</span>
+                        <span className="font-semibold text-amber-900">{new Date(order.createdAt).toLocaleDateString()}</span>
                     </div>
                 </div>
 
-                {/* Items List - Receipt Style */}
-                <div className="border-t border-dashed border-gray-300 pt-4">
-                    <h4 className="text-sm font-semibold text-gray-700 mb-3">ITEMS</h4>
-                    <div className="space-y-2">
-                        {order.items.map((item, index) => (
-                            <div key={item.productId || index} className="flex justify-between items-center">
-                                <div className="flex-1">
-                                        <span className="text-sm text-gray-800">
-                                            {item.productName}
-                                        </span>
-                                    <span className="text-xs text-gray-500 ml-2">
-                                        x{item.quantity}
-                                    </span>
-                                </div>
-                                <div className="text-sm font-medium text-gray-800">
-                                    ₺{(item.price * item.quantity).toFixed(2)}
-                                </div>
-                            </div>
-                        ))}
+                {/* Items Section */}
+                <div className="border-t border-dashed border-amber-400 pt-3 mb-4">
+                    {/* Table Header */}
+                    <div className="grid grid-cols-12 gap-2 font-bold mb-2 text-xs text-amber-800 border-b border-amber-300 pb-1">
+                        <span className="col-span-5">ITEM</span>
+                        <span className="col-span-2 text-center">QTY</span>
+                        <span className="col-span-2 text-center">PRICE</span>
+                        <span className="col-span-3 text-right">TOTAL</span>
                     </div>
+
+                    {/* Items */}
+                    {order.items.map((item, index) => (
+                        <div key={item.productId || index} className="grid grid-cols-12 gap-2 mb-2 text-amber-900">
+                            <span className="col-span-5 truncate">
+                                {item.productName}
+                            </span>
+                            <span className="col-span-2 text-center">
+                                {item.quantity}
+                            </span>
+                            <span className="col-span-2 text-center">
+                                ₺{item.price.toFixed(2)}
+                            </span>
+                            <span className="col-span-3 text-right font-semibold">
+                                ₺{(item.price * item.quantity).toFixed(2)}
+                            </span>
+                        </div>
+                    ))}
                 </div>
 
                 {/* Note Section */}
                 {order.note && (
-                    <div className="border-t border-dashed border-gray-300 mt-4 pt-4">
-                        <h4 className="text-sm font-semibold text-gray-700 mb-2">NOTE</h4>
-                        <p className="text-sm text-gray-600">{order.note}</p>
+                    <div className="border-t border-dashed border-amber-400 pt-3 mb-4">
+                        <div className="text-xs text-amber-700 mb-1">NOTE:</div>
+                        <div className="text-sm bg-yellow-50 p-2 rounded border-l-4 border-yellow-400 text-amber-800">
+                            {order.note}
+                        </div>
                     </div>
                 )}
 
-                {/* Total */}
-                <div className="border-t border-dashed border-gray-300 mt-4 pt-4">
+                {/* Total Section */}
+                <div className="border-t-2 border-double border-amber-600 pt-3 mb-4">
                     <div className="flex justify-between items-center">
-                        <span className="text-lg font-bold text-gray-800">TOTAL</span>
-                        <span className="text-lg font-bold text-amber-600">
-                            ₺{order.total}
+                        <span className="text-lg font-bold text-amber-800">TOTAL:</span>
+                        <span className="text-xl font-bold text-amber-600">
+                            ₺{order.total.toFixed(2)}
                         </span>
                     </div>
                 </div>
 
-                {/* Additional Info */}
-                <div className="border-t border-gray-200 mt-4 pt-4">
-                    <div className="text-xs text-gray-500 space-y-1">
-                        <p>Created by: {order.createdBy}</p>
-                        <p>Order ID: {order._id}</p>
-                        <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+                {/* Actions - Outside the receipt style */}
+                <div className="border-t-2 border-amber-200 pt-4 -mx-6 px-6 bg-amber-50 h-full">
+                    <div className="flex flex-row gap-2 justify-between w-full">
+                        <button
+                            onClick={() => handleAction('pending')}
+                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
+                            title="Set Pending"
+                            disabled={order.status === 'pending'}
+                        >
+                            <Clock className="h-3 w-3" />
+                            <span>Pending</span>
+                        </button>
+                        <button
+                            onClick={() => handleAction('preparing')}
+                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
+                            title="Set Preparing"
+                            disabled={order.status === 'preparing'}
+                        >
+                            <ChefHat className="h-3 w-3" />
+                            <span>Preparing</span>
+                        </button>
+                        <button
+                            onClick={() => handleAction('served')}
+                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
+                            title="Set Served"
+                            disabled={order.status === 'served'}
+                        >
+                            <CheckCircle className="h-3 w-3" />
+                            <span>Served</span>
+                        </button>
+                        <button
+                            onClick={() => openModal(<OrderForm order={order} />, "Edit Order")}
+                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-amber-500 text-white rounded-md hover:bg-amber-600 transition-colors hover:cursor-pointer"
+                            title="Edit order"
+                        >
+                            <Edit className="h-3 w-3" />
+                            <span>Edit</span>
+                        </button>
+                        <button
+                            onClick={() => handleAction('delete')}
+                            className="flex items-center space-x-1 px-4 py-2 text-xs bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors hover:cursor-pointer"
+                            title="Delete order"
+                        >
+                            <Trash2 className="h-3 w-3" />
+                            <span>Delete</span>
+                        </button>
                     </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-end space-x-2 mt-4 pt-4 border-t border-gray-200">
-                    <button
-                        onClick={() => openModal(<OrderForm order={order} />, "Edit Order")}
-                        className="flex items-center space-x-1 px-3 py-2 text-sm bg-amber-100 text-amber-700 rounded-md hover:bg-amber-200 transition-colors"
-                        title="Edit order"
-                    >
-                        <Edit className="h-4 w-4" />
-                        <span>Edit</span>
-                    </button>
-                    <button
-                        onClick={() => deleteOrderFetch(order._id)}
-                        className="flex items-center space-x-1 px-3 py-2 text-sm bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors"
-                        title="Delete order"
-                    >
-                        <Trash2 className="h-4 w-4" />
-                        <span>Delete</span>
-                    </button>
                 </div>
             </div>
         </div>
