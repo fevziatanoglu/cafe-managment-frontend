@@ -1,16 +1,18 @@
-import React from 'react';
 import { Filter } from 'lucide-react';
-import type { TABLE } from '../../types';
-
-
+import type { TABLE_WITH_ORDERS } from '../../types/Table';
 
 interface TableFiltersProps {
   selectedStatus: 'all' | 'empty' | 'occupied' | 'reserved';
   onStatusChange: (status: 'all' | 'empty' | 'occupied' | 'reserved') => void;
-  tables: TABLE[];
+  tables: TABLE_WITH_ORDERS[];
 }
 
-export const TableFilters: React.FC<TableFiltersProps> = ({ selectedStatus, onStatusChange, tables }) => {
+export default function TableFilters({
+  selectedStatus,
+  onStatusChange,
+  tables,
+}: TableFiltersProps) {
+  // Status counts and options
   const statusCounts = {
     all: tables.length,
     empty: tables.filter(t => t.status === 'empty').length,
@@ -63,15 +65,18 @@ export const TableFilters: React.FC<TableFiltersProps> = ({ selectedStatus, onSt
           <button
             key={option.value}
             onClick={() => onStatusChange(option.value)}
-            className={`flex items-center space-x-3 px-6 py-4 rounded-xl font-medium transition-all duration-300 ${selectedStatus === option.value
-              ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg transform scale-105'
-              : option.color
+            className={`flex items-center space-x-3 px-6 py-4 rounded-xl font-medium transition-all duration-300 hover:cursor-pointer ${
+              selectedStatus === option.value
+                ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg transform scale-105'
+                : option.color
               }`}
           >
             <span className="text-xl">{option.icon}</span>
             <div className="text-left">
               <div className="font-semibold">{option.label}</div>
-              <div className={`text-sm ${selectedStatus === option.value ? 'text-white opacity-90' : 'opacity-70'}`}>
+              <div className={`text-sm ${
+                selectedStatus === option.value ? 'text-white opacity-90' : 'opacity-70'
+              }`}>
                 {option.count} tables
               </div>
             </div>
@@ -80,7 +85,4 @@ export const TableFilters: React.FC<TableFiltersProps> = ({ selectedStatus, onSt
       </div>
     </div>
   );
-};
-
-
-
+}

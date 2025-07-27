@@ -15,6 +15,7 @@ interface TableState {
   tables: TABLE[];
   tablesWithOrders?: TABLE_WITH_ORDERS[];
   selectedTable: TABLE | null;
+  isTablesLoading: boolean;
 }
 
 interface TableActions {
@@ -33,20 +34,25 @@ export const createTableSlice: StateCreator<TableStore> = (set, get) => ({
   tables: [],
   tablesWithOrders: [],
   selectedTable: null,
+  isTablesLoading: false,
 
   getTablesFetch: async () => {
+    set({ isTablesLoading: true });
     const response = await getTables();
     if (response.success && response.data) {
       set({ tables: response.data });
     }
+    set({ isTablesLoading: false });
     return response;
   },
 
   getTableByIdFetch: async (id: string) => {
+    set({ isTablesLoading: true });
     const response = await getTableById(id);
     if (response.success && response.data) {
       set({ selectedTable: response.data });
     }
+    set({ isTablesLoading: false });
     return response;
   },
 
@@ -93,10 +99,12 @@ export const createTableSlice: StateCreator<TableStore> = (set, get) => ({
   },
 
   getTablesWithOrders: async () => {
+    set({ isTablesLoading: true });
     const response = await getTablesWithOrders();
     if (response.success && response.data) {
       set({ tablesWithOrders: response.data });
     }
+    set({ isTablesLoading: false });
     return response;
   }
 });
