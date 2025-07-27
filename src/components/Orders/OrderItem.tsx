@@ -1,4 +1,4 @@
-import { Edit, Trash2, Clock, ChefHat, CheckCircle } from 'lucide-react';
+import { Edit, Trash2, Clock, ChefHat, CheckCircle, MoreVertical } from 'lucide-react';
 import type { ORDER } from '../../types/Order';
 import useStore from '../../store';
 import OrderForm from './OrderForm';
@@ -42,6 +42,7 @@ function getHeaderBackgroundColor(status: string) {
 const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
     const { deleteOrderFetch, openModal, updateOrderFetch } = useStore();
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showActions, setShowActions] = useState(false);
 
     const handleAction = async (action: 'pending' | 'preparing' | 'served' | 'delete') => {
         setIsLoading(true);
@@ -56,8 +57,15 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
         }
     };
 
-    // Generate order number from _id (last 8 characters)
-    const orderNumber = `#${order._id.slice(-8).toUpperCase()}`;
+    const handleDelete = async () => {
+        if (confirm('Are you sure you want to delete this order?')) {
+            await handleAction('delete');
+        }
+        setShowActions(false);
+    };
+
+    // Generate order number from _id (last 4 characters)
+    const orderNumber = `#${order._id.slice(-4).toUpperCase()}`;
 
     // Show skeleton when loading
     if (isLoading) {
@@ -84,8 +92,10 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                             {order.status.toUpperCase()}
                         </div>
                     </div>
-                    <div className="text-right">
-                        <div className="flex items-center space-x-2 text-amber-700">
+
+                    {/* Time */}
+                    <div className="mt-2 text-right">
+                        <div className="flex items-center justify-end space-x-2 text-amber-700">
                             <Clock className="h-4 w-4" />
                             <span className="text-sm font-mono">
                                 {new Date(order.createdAt).toLocaleTimeString('en-US', {
@@ -97,6 +107,35 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                         <span className="text-xs text-amber-600">
                             {Math.floor((Date.now() - new Date(order.createdAt).getTime()) / 60000)} min ago
                         </span>
+                    </div>
+
+                    {/* Actions Menu */}
+                    <div className="relative">
+                        <button
+                            onClick={() => setShowActions(!showActions)}
+                            className="p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-colors backdrop-blur-sm hover:cursor-pointer "
+                        >
+                            <MoreVertical className="h-4 w-4 text-gray-600" />
+                        </button>
+
+                        {showActions && (
+                            <div className="absolute top-12 right-0 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-20 min-w-[140px] backdrop-blur-sm">
+                                <button
+                                    onClick={() => openModal(<OrderForm order={order} />, "Edit Order")}
+                                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-amber-50 flex items-center space-x-2 transition-colors"
+                                >
+                                    <Edit className="h-4 w-4" />
+                                    <span>Edit Order</span>
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2 transition-colors"
+                                >
+                                    <Trash2 className="h-4 w-4" />
+                                    <span>Delete</span>
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -171,49 +210,30 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
 
             {/* Actions - Always at bottom */}
             <div className="border-t-2 border-amber-200 pt-4 px-6 bg-amber-50 mt-auto">
-                <div className="flex flex-row gap-2 justify-between w-full pb-4">
+                <div className="flex flex-row gap-2 justify-center w-full pb-4">
                     <button
                         onClick={() => handleAction('pending')}
-                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
-                        title="Set Pending"
+                        className="flex items-center space-x-1 px-3 py-2 hover:cursor-pointer text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
                         disabled={order.status === 'pending'}
                     >
-                        <Clock className="h-3 w-3" />
+                        <Clock className="h-4 w-4" />
                         <span>Pending</span>
                     </button>
                     <button
                         onClick={() => handleAction('preparing')}
-                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
-                        title="Set Preparing"
+                        className="flex items-center space-x-1 px-3 py-2 hover:cursor-pointer text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
                         disabled={order.status === 'preparing'}
                     >
-                        <ChefHat className="h-3 w-3" />
+                        <ChefHat className="h-4 w-4" />
                         <span>Preparing</span>
                     </button>
                     <button
                         onClick={() => handleAction('served')}
-                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:opacity-50 hover:cursor-pointer"
-                        title="Set Served"
+                        className="flex items-center space-x-1 px-3 py-2 hover:cursor-pointer text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
                         disabled={order.status === 'served'}
                     >
-                        <CheckCircle className="h-3 w-3" />
+                        <CheckCircle className="h-4 w-4" />
                         <span>Served</span>
-                    </button>
-                    <button
-                        onClick={() => openModal(<OrderForm order={order} />, "Edit Order")}
-                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-amber-500 text-white rounded-md hover:bg-amber-600 transition-colors hover:cursor-pointer"
-                        title="Edit order"
-                    >
-                        <Edit className="h-3 w-3" />
-                        <span>Edit</span>
-                    </button>
-                    <button
-                        onClick={() => handleAction('delete')}
-                        className="flex items-center space-x-1 px-4 py-2 text-xs bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors hover:cursor-pointer"
-                        title="Delete order"
-                    >
-                        <Trash2 className="h-3 w-3" />
-                        <span>Delete</span>
                     </button>
                 </div>
             </div>

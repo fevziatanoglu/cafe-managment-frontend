@@ -106,8 +106,8 @@ export default function TableItem({ table }: TableCardProps) {
         {/* Actions Menu */}
         <button
           onClick={() => setShowActions(!showActions)}
-          className="p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-colors backdrop-blur-sm"
-        >
+          className="p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-colors backdrop-blur-sm hover:cursor-pointer "
+          >
           <MoreVertical className="h-4 w-4 text-gray-600" />
         </button>
 
