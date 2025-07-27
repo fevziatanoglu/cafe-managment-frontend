@@ -102,7 +102,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
             </div>
 
             {/* Receipt Body - Flex grow to push actions to bottom */}
-            <div className="px-6 py-4 font-mono text-sm bg-amber-25 flex-grow">
+            <div className="px-6 py-4 font-mono text-sm bg-amber-25 flex flex-col h-full justify-between">
                 {/* Table & Waiter Info */}
                 <div className="space-y-2 mb-4">
                     <div className="flex justify-between">
@@ -120,7 +120,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                 </div>
 
                 {/* Items Section */}
-                <div className="border-t border-dashed border-amber-400 pt-3 mb-4">
+                <div className="border-t border-dashed border-amber-400 pt-3 mb-4 h-full">
                     {/* Table Header */}
                     <div className="grid grid-cols-12 gap-2 font-bold mb-2 text-xs text-amber-800 border-b border-amber-300 pb-1">
                         <span className="col-span-5">ITEM</span>

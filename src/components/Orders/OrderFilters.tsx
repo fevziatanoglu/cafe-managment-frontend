@@ -133,7 +133,7 @@ export default function OrderListFilters({
             <button
               key={option.value}
               onClick={() => onStatusChange(option.value)}
-              className={`flex items-center space-x-3 px-6 py-4 rounded-xl font-medium transition-all duration-300 ${
+              className={`flex items-center space-x-3 px-6 py-4 rounded-xl font-medium transition-all duration-300 hover:cursor-pointer ${
                 selectedStatus === option.value
                   ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg transform scale-105'
                   : option.color
