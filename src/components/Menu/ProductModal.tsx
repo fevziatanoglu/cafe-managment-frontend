@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Coffee, Plus, Trash2 } from 'lucide-react';
+import { X, Save, Coffee, Plus } from 'lucide-react';
 import type { Product } from './Menu';
 
 interface ProductModalProps {

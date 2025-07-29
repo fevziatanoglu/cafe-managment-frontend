@@ -1,5 +1,5 @@
 import React from 'react';
-import { Users, UserCheck, UserX, Clock, DollarSign, TrendingUp } from 'lucide-react';
+import { Users, UserCheck, UserX, DollarSign, TrendingUp } from 'lucide-react';
 import { StatsCard } from '../Dashboard/StatsCard';
 import type { Worker } from './Workers';
 

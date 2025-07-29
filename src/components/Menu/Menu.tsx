@@ -132,12 +132,12 @@ export const Menu: React.FC = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = products.filter(product => {
+    const filtered = products.filter(product => {
       const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-      const matchesAvailability = selectedAvailability === 'all' || 
+      const matchesAvailability = selectedAvailability === 'all' ||
         (selectedAvailability === 'available' && product.isAvailable) ||
         (selectedAvailability === 'unavailable' && !product.isAvailable);
-      const matchesSearch = 
+      const matchesSearch =
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.category.toLowerCase().includes(searchTerm.toLowerCase());
@@ -146,34 +146,38 @@ export const Menu: React.FC = () => {
     });
 
     // Sort products
-    filtered.sort((a, b) => {
-      let aValue: any = a[sortBy as keyof Product];
-      let bValue: any = b[sortBy as keyof Product];
+    type SortableProductKey = 'name' | 'price' | 'popularity' | 'calories' | 'preparationTime' | 'createdAt' | 'updatedAt';
 
-      if (sortBy === 'createdAt' || sortBy === 'updatedAt') {
-        aValue = new Date(aValue).getTime();
-        bValue = new Date(bValue).getTime();
+    filtered.sort((a, b) => {
+      // Only allow sorting by keys that exist on Product
+      const key = sortBy as SortableProductKey;
+
+      let aValue = a[key];
+      let bValue = b[key];
+
+      // Handle date fields
+      if (key === 'createdAt' || key === 'updatedAt') {
+        aValue = new Date(aValue as string).getTime();
+        bValue = new Date(bValue as string).getTime();
       }
 
-      if (sortBy === 'price' || sortBy === 'popularity' || sortBy === 'calories' || sortBy === 'preparationTime') {
+      // Handle number fields
+      if (key === 'price' || key === 'popularity' || key === 'calories' || key === 'preparationTime') {
         aValue = Number(aValue);
         bValue = Number(bValue);
       }
 
       if (sortOrder === 'asc') {
-        return aValue > bValue ? 1 : -1;
+        return (aValue ?? 0) > (bValue ?? 0) ? 1 : -1;
       } else {
-        return aValue < bValue ? 1 : -1;
+        return (aValue ?? 0) < (bValue ?? 0) ? 1 : -1;
       }
     });
 
     return filtered;
   }, [products, selectedCategory, selectedAvailability, searchTerm, sortBy, sortOrder]);
 
-  const handleAddProduct = () => {
-    setEditingProduct(null);
-    setIsModalOpen(true);
-  };
+
 
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
@@ -186,14 +190,14 @@ export const Menu: React.FC = () => {
 
   const handleSaveProduct = (productData: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
     if (editingProduct) {
-      setProducts(products.map(product => 
-        product.id === editingProduct.id 
-          ? { 
-              ...productData, 
-              id: editingProduct.id,
-              createdAt: editingProduct.createdAt,
-              updatedAt: new Date().toISOString()
-            }
+      setProducts(products.map(product =>
+        product.id === editingProduct.id
+          ? {
+            ...productData,
+            id: editingProduct.id,
+            createdAt: editingProduct.createdAt,
+            updatedAt: new Date().toISOString()
+          }
           : product
       ));
     } else {
@@ -210,8 +214,8 @@ export const Menu: React.FC = () => {
   };
 
   const handleAvailabilityToggle = (productId: number) => {
-    setProducts(products.map(product => 
-      product.id === productId 
+    setProducts(products.map(product =>
+      product.id === productId
         ? { ...product, isAvailable: !product.isAvailable, updatedAt: new Date().toISOString() }
         : product
     ));
@@ -219,11 +223,11 @@ export const Menu: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
-      <MenuHeader onAddProduct={handleAddProduct} />
+      <MenuHeader />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <MenuStats products={products} />
-        
+
         <MenuFilters
           selectedCategory={selectedCategory}
           onCategoryChange={setSelectedCategory}

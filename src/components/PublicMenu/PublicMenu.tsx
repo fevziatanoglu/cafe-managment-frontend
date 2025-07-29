@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Coffee, Search, Star, Clock, Users } from 'lucide-react';
+import { Coffee, Search } from 'lucide-react';
 import { MenuCategory } from './MenuCategory';
 import { MenuItem } from './MenuItem';
 import { MenuHeader } from './MenuHeader';
