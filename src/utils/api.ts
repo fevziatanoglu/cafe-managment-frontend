@@ -2,8 +2,8 @@ import axios from "axios";
 import useStore from "../store";
 
 const requestApi = axios.create({
-    baseURL: "http://localhost:5001/api",
-    withCredentials: true,
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
 });
 
 requestApi.interceptors.request.use((config) => {
