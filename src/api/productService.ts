@@ -18,7 +18,7 @@ export const createProduct = async (
 // Update Product
 export const updateProduct = async (
   id: string,
-  productData: Partial<PRODUCT>
+  productData: CreateProductFormValues
 ): Promise<API_RESPONSE<PRODUCT>> => {
   try {
     const response = await requestApi.put(`/products/${id}`, productData);

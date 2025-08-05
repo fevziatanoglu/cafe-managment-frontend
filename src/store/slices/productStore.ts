@@ -16,7 +16,7 @@ interface ProductState {
 
 interface ProductActions {
   createProductFetch: (data: CreateProductFormValues) => Promise<API_RESPONSE<PRODUCT>>;
-  updateProductFetch: (id: string, data: Partial<PRODUCT>) => Promise<API_RESPONSE<PRODUCT>>;
+  updateProductFetch: (id: string, data: CreateProductFormValues) => Promise<API_RESPONSE<PRODUCT>>;
   deleteProductFetch: (id: string) => Promise<API_RESPONSE<PRODUCT>>;
   getProductByIdFetch: (id: string) => Promise<API_RESPONSE<PRODUCT>>;
   getProductsFetch: () => Promise<API_RESPONSE<PRODUCT[]>>;

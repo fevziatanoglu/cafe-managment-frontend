@@ -5,7 +5,7 @@ export const createProductSchema = z.object({
   description: z.string().optional(),
   price: z.number().min(1, "Price must be a positive number"),
   category: z.string().optional(),
-  image: z.union([z.string().url(), z.instanceof(File)]).optional(),
+  image: z.union([z.instanceof(File), z.string()]).optional()
 });
 
 export type CreateProductFormValues = z.infer<typeof createProductSchema>;

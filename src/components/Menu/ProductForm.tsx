@@ -3,19 +3,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useStore from "../../store";
 import { Coffee } from "lucide-react";
 import { createProductSchema, type CreateProductFormValues } from "../../validations/productSchema";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import type { PRODUCT } from "../../types/Product";
 
-export default function ProductForm() {
-  const { createProductFetch } = useStore();
+interface ProductFormProps {
+  product?: PRODUCT | null;
+}
+
+export default function ProductForm({ product }: ProductFormProps) {
+  const { createProductFetch, updateProductFetch } = useStore();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const [imageInputType, setImageInputType] = useState<"file" | "url">("file");
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm<CreateProductFormValues>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
@@ -26,21 +34,50 @@ export default function ProductForm() {
     },
   });
 
+  useEffect(() => {
+    if (product) {
+      setValue("name", product.name || "");
+      setValue("description", product.description || "");
+      setValue("price", product.price || 1);
+      setValue("category", product.category || "");
+      if (product.image) {
+        setImageUrl(product.image);
+      }
+    }
+  }, [product, setValue]);
+
   const onSubmit = async (data: CreateProductFormValues) => {
     setError(null);
     setSuccess(null);
 
-    // Attach image file if selected
-    const imageFile = imageInputRef.current?.files?.[0];
-    const payload = imageFile ? { ...data, image: imageFile } : data;
+    const payload: CreateProductFormValues = { ...data };
 
-    const response = await createProductFetch(payload);
-    if (response.success) {
-      setSuccess("Product created successfully!");
-      reset();
-      if (imageInputRef.current) imageInputRef.current.value = "";
+    if (imageInputType === "file") {
+      const imageFile = imageInputRef.current?.files?.[0];
+      if (imageFile) {
+        payload.image = imageFile;
+      }
+    } else if (imageInputType === "url" && imageUrl) {
+      payload.image = imageUrl;
+    }
+
+    let response;
+    if (product && product._id) {
+      response = await updateProductFetch(product._id, payload);
+      if (response.success) {
+        setSuccess("Product updated successfully!");
+      } else {
+        setError(response.message || "Failed to update product.");
+      }
     } else {
-      setError(response.message || "Failed to create product.");
+      response = await createProductFetch(payload);
+      if (response.success) {
+        setSuccess("Product created successfully!");
+        reset();
+        if (imageInputRef.current) imageInputRef.current.value = "";
+      } else {
+        setError(response.message || "Failed to create product.");
+      }
     }
   };
 
@@ -57,8 +94,12 @@ export default function ProductForm() {
             <Coffee className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Create Product</h2>
-            <p className="text-sm text-gray-600">Add a new product to your menu</p>
+            <h2 className="text-xl font-bold text-gray-900">
+              {product ? "Update Product" : "Create Product"}
+            </h2>
+            <p className="text-sm text-gray-600">
+              {product ? "Edit product details" : "Add a new product to your menu"}
+            </p>
           </div>
         </div>
 
@@ -114,12 +155,38 @@ export default function ProductForm() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              ref={imageInputRef}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-            />
+            <div className="flex items-center gap-4 mb-2">
+              <button
+                type="button"
+                className={`px-2 py-1 rounded ${imageInputType === "file" ? "bg-orange-500 text-white" : "bg-gray-200"}`}
+                onClick={() => setImageInputType("file")}
+              >
+                Upload File
+              </button>
+              <button
+                type="button"
+                className={`px-2 py-1 rounded ${imageInputType === "url" ? "bg-orange-500 text-white" : "bg-gray-200"}`}
+                onClick={() => setImageInputType("url")}
+              >
+                Use URL
+              </button>
+            </div>
+            {imageInputType === "file" ? (
+              <input
+                type="file"
+                accept="image/*"
+                ref={imageInputRef}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
+            ) : (
+              <input
+                type="text"
+                value={imageUrl}
+                onChange={e => setImageUrl(e.target.value)}
+                placeholder="Paste image URL"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
+            )}
           </div>
         </div>
 
@@ -129,7 +196,13 @@ export default function ProductForm() {
           disabled={isSubmitting}
           className="w-full py-2 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg font-medium hover:from-orange-700 hover:to-red-700 transition-all duration-200 disabled:opacity-60"
         >
-          {isSubmitting ? "Creating..." : "Create Product"}
+          {isSubmitting
+            ? product
+              ? "Updating..."
+              : "Creating..."
+            : product
+            ? "Update Product"
+            : "Create Product"}
         </button>
       </form>
     </div>
