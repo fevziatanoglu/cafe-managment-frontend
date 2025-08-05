@@ -3,6 +3,7 @@ import Modal from "../components/Common/Modal";
 import useStore from "../store";
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
+import Loading from "../pages/loading/loading";
 
 
 export default function MainLayout() {
@@ -21,7 +22,7 @@ export default function MainLayout() {
   return (
     <>
       {isLoading ? (
-        <div>Loading...</div>
+        <Loading/>
       ) : (
         <>
           <Navbar />
