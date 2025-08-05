@@ -75,7 +75,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
     return (
         <div className="bg-white rounded-lg shadow-lg border border-amber-200 overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
             {/* Receipt Header - Paper Style */}
-            <div className={`${getHeaderBackgroundColor(order.status)} px-6 py-4 border-b-2 border-dashed border-amber-300 relative`}>
+            <div className={`${getHeaderBackgroundColor(order.status)} px-5 py-2 border-b-2 border-dashed border-amber-300`}>
                 {/* Perforated edge effect */}
                 <div className="absolute left-0 top-0 w-full h-2 bg-repeat-x"
                     style={{
@@ -84,11 +84,11 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                 </div>
 
                 <div className="flex items-center justify-between pt-2">
-                    <div className="flex items-center space-x-4">
-                        <div className="text-xl font-bold text-amber-800 font-mono">
+                    <div className="flex flex-col md:flex-row space-x-4">
+                        <div className="w-full text-center text-xl font-bold text-amber-800 font-mono">
                             {orderNumber}
                         </div>
-                        <div className={`px-4 py-1 rounded-full text-xs font-semibold border-2 ${getStatusBadgeColor(order.status)}`}>
+                        <div className={`px-4 py-1 rounded-md text-xs font-semibold border-2 ${getStatusBadgeColor(order.status)}`}>
                             {order.status.toUpperCase()}
                         </div>
                     </div>
@@ -141,9 +141,9 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
             </div>
 
             {/* Receipt Body - Flex grow to push actions to bottom */}
-            <div className="px-6 py-4 font-mono text-sm bg-amber-25 flex flex-col h-full justify-between">
+            <div className="p-4 font-mono text-sm bg-amber-25 flex flex-col h-full justify-between">
                 {/* Table & Waiter Info */}
-                <div className="space-y-2 mb-4">
+                <div className="space-y-2 mb-2">
                     <div className="flex justify-between">
                         <span className="text-amber-700">TABLE:</span>
                         <span className="font-semibold text-amber-900">{order.tableName || `Table ${order.tableId}`}</span>
@@ -161,8 +161,8 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                 {/* Items Section */}
                 <div className="border-t border-dashed border-amber-400 pt-3 mb-4 h-full">
                     {/* Table Header */}
-                    <div className="grid grid-cols-12 gap-2 font-bold mb-2 text-xs text-amber-800 border-b border-amber-300 pb-1">
-                        <span className="col-span-5">ITEM</span>
+                    <div className="grid grid-cols-10 gap-2 font-bold mb-2 text-xs text-amber-800 border-b border-amber-300 pb-1">
+                        <span className="col-span-3">ITEM</span>
                         <span className="col-span-2 text-center">QTY</span>
                         <span className="col-span-2 text-center">PRICE</span>
                         <span className="col-span-3 text-right">TOTAL</span>
@@ -170,8 +170,8 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
 
                     {/* Items */}
                     {order.items.map((item, index) => (
-                        <div key={item.productId || index} className="grid grid-cols-12 gap-2 mb-2 text-amber-900">
-                            <span className="col-span-5 truncate">
+                        <div key={item.productId || index} className="grid grid-cols-10 gap-2 mb-2 text-amber-900">
+                            <span className="col-span-3 truncate">
                                 {item.productName}
                             </span>
                             <span className="col-span-2 text-center">
@@ -213,7 +213,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                 <div className="flex flex-row gap-2 justify-center w-full pb-4">
                     <button
                         onClick={() => handleAction('pending')}
-                        className="flex items-center space-x-1 px-3 py-2 hover:cursor-pointer text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
+                        className="flex items-center space-x-1 px-1 lg:px-3 py-3 hover:cursor-pointer text-xs md:text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
                         disabled={order.status === 'pending'}
                     >
                         <Clock className="h-4 w-4" />
@@ -221,7 +221,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                     </button>
                     <button
                         onClick={() => handleAction('preparing')}
-                        className="flex items-center space-x-1 px-3 py-2 hover:cursor-pointer text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
+                        className="flex items-center space-x-1 px-1 lg:px-3 py-2 hover:cursor-pointer text-xs md:text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
                         disabled={order.status === 'preparing'}
                     >
                         <ChefHat className="h-4 w-4" />
@@ -229,7 +229,7 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
                     </button>
                     <button
                         onClick={() => handleAction('served')}
-                        className="flex items-center space-x-1 px-3 py-2 hover:cursor-pointer text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
+                        className="flex items-center space-x-1 px-1 lg:px-3 py-2 hover:cursor-pointer text-xs md:text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
                         disabled={order.status === 'served'}
                     >
                         <CheckCircle className="h-4 w-4" />
