@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import type { PRODUCT } from "../../types";
 import ProductItem from "./ProductItem";
 import { GenericFilter, type FilterOption } from "../Common/GenericFilter";
+import useStore from "../../store";
+import ProductForm from "./ProductForm";
 
 // Dummy data for status options they will be change
 const dummyStatusOptions: FilterOption<string>[] = [
@@ -21,6 +23,7 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
+  const { openModal } = useStore();
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<string>("name");
@@ -47,9 +50,6 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
     return 0;
   });
 
-  const handleCreateProduct = () => {
-    // TODO: open modal for product creation
-  };
 
   return (
     <div>
@@ -57,7 +57,7 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
         options={dummyStatusOptions}
         selected={selectedStatus}
         onChange={setSelectedStatus}
-        onOpenModal={handleCreateProduct}
+        onOpenModal={() => openModal(<ProductForm />, "Create New Order")}
         createLabel="Create Product"
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}

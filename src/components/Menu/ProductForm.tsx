@@ -3,12 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useStore from "../../store";
 import { Coffee } from "lucide-react";
 import { createProductSchema, type CreateProductFormValues } from "../../validations/productSchema";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
-export default function CreateProductPage() {
+export default function ProductForm() {
   const { createProductFetch } = useStore();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const {
     register,
@@ -28,10 +29,16 @@ export default function CreateProductPage() {
   const onSubmit = async (data: CreateProductFormValues) => {
     setError(null);
     setSuccess(null);
-    const response = await createProductFetch(data);
+
+    // Attach image file if selected
+    const imageFile = imageInputRef.current?.files?.[0];
+    const payload = imageFile ? { ...data, image: imageFile } : data;
+
+    const response = await createProductFetch(payload);
     if (response.success) {
       setSuccess("Product created successfully!");
       reset();
+      if (imageInputRef.current) imageInputRef.current.value = "";
     } else {
       setError(response.message || "Failed to create product.");
     }
@@ -42,6 +49,7 @@ export default function CreateProductPage() {
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white rounded-xl shadow-lg p-6 space-y-6"
+        encType="multipart/form-data"
       >
         {/* Header */}
         <div className="flex items-center space-x-3">
@@ -104,6 +112,15 @@ export default function CreateProductPage() {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              ref={imageInputRef}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+            />
+          </div>
         </div>
 
         {/* Footer */}
