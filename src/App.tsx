@@ -8,7 +8,7 @@ import MainLayout from "./layouts/MainLayout";
 import PublicLayout from "./layouts/PublicLayout";
 import AuthLayout from "./layouts/AuthLayout";
 import AdminLayout from "./layouts/AdminLayout";
-import Staff from "./pages/staff/Staff";
+import Staff from "./pages/staff/staff";
 import Orders from "./pages/orders/orders";
 import Tables from "./pages/tables/tables";
 import Menu from "./pages/menu/menu";
