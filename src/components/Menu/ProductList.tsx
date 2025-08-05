@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { PRODUCT } from "../../types";
 import ProductItem from "./ProductItem";
+import ProductItemSkeleton from "./ProductItemSkeleton";
 import { GenericFilter, type FilterOption } from "../Common/GenericFilter";
 import useStore from "../../store";
 import ProductForm from "./ProductForm";
@@ -23,7 +24,7 @@ interface ProductListProps {
 }
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
-  const { openModal } = useStore();
+  const { openModal, isProductsLoading } = useStore();
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<string>("name");
@@ -68,7 +69,11 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
         sortOptions={sortOptions}
       />
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredProducts.length === 0 ? (
+        {isProductsLoading ? (
+          Array.from({ length: 6 }).map((_, index) => (
+            <ProductItemSkeleton key={index} />
+          ))
+        ) : filteredProducts.length === 0 ? (
           <div className="col-span-full text-center text-gray-400 py-12">No products found.</div>
         ) : (
           filteredProducts.map((product) => <ProductItem key={product._id} product={product} />)

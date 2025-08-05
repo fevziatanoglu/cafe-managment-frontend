@@ -12,6 +12,7 @@ import {
 interface ProductState {
   products: PRODUCT[];
   selectedProduct: PRODUCT | null;
+  isProductsLoading: boolean;
 }
 
 interface ProductActions {
@@ -28,6 +29,7 @@ export type ProductStore = ProductState & ProductActions;
 export const createProductSlice: StateCreator<ProductStore> = (set, get) => ({
   products: [],
   selectedProduct: null,
+  isProductsLoading: false,
 
   createProductFetch: async (data) => {
     const response = await createProduct(data);
@@ -68,10 +70,12 @@ export const createProductSlice: StateCreator<ProductStore> = (set, get) => ({
   },
 
   getProductsFetch: async () => {
+    set({ isProductsLoading: true });
     const response = await getProducts();
     if (response.success && response.data) {
       set({ products: response.data });
     }
+    set({ isProductsLoading: false });
     return response;
   },
 
