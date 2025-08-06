@@ -5,7 +5,7 @@ import type { CreateProductFormValues } from "../validations/productSchema";
 
 // Create Product (already exists)
 export const createProduct = async (
-  productData: CreateProductFormValues
+  productData: CreateProductFormValues | FormData
 ): Promise<API_RESPONSE<PRODUCT>> => {
   try {
     const response = await requestApi.post('/products', productData);
@@ -18,7 +18,7 @@ export const createProduct = async (
 // Update Product
 export const updateProduct = async (
   id: string,
-  productData: CreateProductFormValues
+  productData: CreateProductFormValues | FormData
 ): Promise<API_RESPONSE<PRODUCT>> => {
   try {
     const response = await requestApi.put(`/products/${id}`, productData);

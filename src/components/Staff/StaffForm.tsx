@@ -6,6 +6,7 @@ import useStore from '../../store';
 import type { STAFF } from '../../types/Staff';
 import { createStaffSchema, type CreateStaffFormValues } from '../../validations/staffScherma';
 import ErrorBox from '../Auth/ErrorBox';
+import ImageInput from '../Common/ImageInput';
 
 interface StaffFormProps {
   staff?: STAFF | null;
@@ -17,9 +18,7 @@ export default function StaffForm({ staff, mode }: StaffFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(staff?.image ?? null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-
+  const [imageValue, setImageValue] = useState<string | File | undefined>(staff?.image || undefined);
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateStaffFormValues>({
     resolver: zodResolver(createStaffSchema),
@@ -38,26 +37,33 @@ export default function StaffForm({ staff, mode }: StaffFormProps) {
 
     try {
       let response;
-      if (staff) {
-        response = await updateStaffFetch(staff._id, {
-          username: data.username,
-          email: data.email,
-          role: data.role,
-          password: data.password || undefined, 
-          image: imageFile || "",
-        });
+      let payload : CreateStaffFormValues | FormData;
+      if (imageValue instanceof File) {
+        // Use FormData for file upload
+      payload = new FormData();
+        payload.append("username", data.username);
+        payload.append("email", data.email);
+        payload.append("role", data.role);
+        if (data.password) payload.append("password", data.password);
+        payload.append("image", imageValue);
       } else {
-        response = await createStaffFetch({
-          username: data.username,
-          email: data.email,
-          role: data.role,
-          password: data.password,
-          image: "",
-        });
+        // Use JSON for URL or no image
+        payload = {
+          ...data,
+          image: imageValue || "",
+        };
       }
+
+      if(staff && staff._id){
+        response = await updateStaffFetch(staff._id, payload);
+      }else{
+        response = await createStaffFetch(payload);
+      }
+
 
       if (response.success) {
         reset();
+        setImageValue(undefined);
         closeModal();
       } else {
         setError(response.message || "Operation failed. Please try again.");
@@ -70,7 +76,7 @@ export default function StaffForm({ staff, mode }: StaffFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6" encType="multipart/form-data">
+    <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
       {error && <ErrorBox message={error} />}
 
       {/* Username Field */}
@@ -218,30 +224,10 @@ export default function StaffForm({ staff, mode }: StaffFormProps) {
       </div>
 
       {/* Image Field */}
-      <div>
-        <label className="block text-sm font-medium text-amber-700 mb-2">
-          Profile Image
-        </label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={e => {
-            const file = e.target.files?.[0];
-            if (file) {
-              setImageFile(file);
-              setImagePreview(URL.createObjectURL(file));
-            }
-          }}
-          className="w-full py-2 px-3 border rounded-lg border-amber-300"
-        />
-        {imagePreview && (
-          <img
-            src={imagePreview}
-            alt="Preview"
-            className="mt-2 h-16 w-16 rounded-full object-cover border border-amber-300"
-          />
-        )}
-      </div>
+      <ImageInput
+        value={imageValue}
+        onChange={setImageValue}
+      />
 
       {/* Action Buttons */}
       <div className="flex space-x-3 pt-4">

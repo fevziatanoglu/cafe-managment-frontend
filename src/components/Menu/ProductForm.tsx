@@ -3,8 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import useStore from "../../store";
 import { Coffee } from "lucide-react";
 import { createProductSchema, type CreateProductFormValues } from "../../validations/productSchema";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import type { PRODUCT } from "../../types/Product";
+import ImageInput from "../Common/ImageInput";
 
 interface ProductFormProps {
   product?: PRODUCT | null;
@@ -14,9 +15,8 @@ export default function ProductForm({ product }: ProductFormProps) {
   const { createProductFetch, updateProductFetch } = useStore();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const imageInputRef = useRef<HTMLInputElement | null>(null);
-  const [imageInputType, setImageInputType] = useState<"file" | "url">("file");
-  const [imageUrl, setImageUrl] = useState<string>("");
+  const [image, setImage] = useState<string | File | undefined>("");
+
 
   const {
     register,
@@ -40,9 +40,7 @@ export default function ProductForm({ product }: ProductFormProps) {
       setValue("description", product.description || "");
       setValue("price", product.price || 1);
       setValue("category", product.category || "");
-      if (product.image) {
-        setImageUrl(product.image);
-      }
+      setImage(product.image || "");
     }
   }, [product, setValue]);
 
@@ -50,34 +48,37 @@ export default function ProductForm({ product }: ProductFormProps) {
     setError(null);
     setSuccess(null);
 
-    const payload: CreateProductFormValues = { ...data };
-
-    if (imageInputType === "file") {
-      const imageFile = imageInputRef.current?.files?.[0];
-      if (imageFile) {
-        payload.image = imageFile;
-      }
-    } else if (imageInputType === "url" && imageUrl) {
-      payload.image = imageUrl;
-    }
 
     let response;
+    let payload : CreateProductFormValues | FormData;    
+    if( image instanceof File) {
+      payload = new FormData();
+      payload.append("name", data.name);
+      payload.append("description", data.description || "");
+      payload.append("price", data.price.toString());
+      payload.append("category", data.category || "");
+      if (image) {
+        payload.append("image", image);
+      }
+    }else{
+      payload = {
+        ...data,
+        image: image || "",
+      };
+    }
+
     if (product && product._id) {
       response = await updateProductFetch(product._id, payload);
-      if (response.success) {
-        setSuccess("Product updated successfully!");
-      } else {
-        setError(response.message || "Failed to update product.");
-      }
     } else {
       response = await createProductFetch(payload);
-      if (response.success) {
-        setSuccess("Product created successfully!");
-        reset();
-        if (imageInputRef.current) imageInputRef.current.value = "";
-      } else {
-        setError(response.message || "Failed to create product.");
-      }
+    }
+
+    if (response.success) {
+      reset();
+      setImage("");
+      setSuccess(product ? "Product updated successfully!" : "Product created successfully!");
+    } else {
+      setError(response.message || "Operation failed. Please try again.");
     }
   };
 
@@ -144,6 +145,8 @@ export default function ProductForm({ product }: ProductFormProps) {
             {errors.price && <p className="mt-1 text-xs text-red-600">{errors.price.message}</p>}
           </div>
 
+          <ImageInput value={image} onChange={setImage}/>
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
             <input
@@ -151,42 +154,6 @@ export default function ProductForm({ product }: ProductFormProps) {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               placeholder="Category"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Image</label>
-            <div className="flex items-center gap-4 mb-2">
-              <button
-                type="button"
-                className={`px-2 py-1 rounded ${imageInputType === "file" ? "bg-orange-500 text-white" : "bg-gray-200"}`}
-                onClick={() => setImageInputType("file")}
-              >
-                Upload File
-              </button>
-              <button
-                type="button"
-                className={`px-2 py-1 rounded ${imageInputType === "url" ? "bg-orange-500 text-white" : "bg-gray-200"}`}
-                onClick={() => setImageInputType("url")}
-              >
-                Use URL
-              </button>
-            </div>
-            {imageInputType === "file" ? (
-              <input
-                type="file"
-                accept="image/*"
-                ref={imageInputRef}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              />
-            ) : (
-              <input
-                type="text"
-                value={imageUrl}
-                onChange={e => setImageUrl(e.target.value)}
-                placeholder="Paste image URL"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              />
-            )}
           </div>
         </div>
 
@@ -201,8 +168,8 @@ export default function ProductForm({ product }: ProductFormProps) {
               ? "Updating..."
               : "Creating..."
             : product
-            ? "Update Product"
-            : "Create Product"}
+              ? "Update Product"
+              : "Create Product"}
         </button>
       </form>
     </div>
