@@ -4,3 +4,4 @@ export type { ORDER, ORDER_STATUS } from "./Order";
 export type {TOKEN_USER_DATA} from "./TokenUser";
 export type { TABLE , TABLE_STATUS , TABLE_WITH_ORDERS } from "./Table";
 export type { PRODUCT } from "./Product";
+export type { STAFF} from "./Staff";

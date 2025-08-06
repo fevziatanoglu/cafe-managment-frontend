@@ -18,7 +18,8 @@
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number'),
       role: z.enum(['waiter', 'kitchen'], {
         error: 'Role must be either waiter or kitchen'
-      })
+      }),
+      image: z.union([z.instanceof(File), z.string()]).optional()
     });
     
     export const updateStaffSchema = z.object({
@@ -42,18 +43,12 @@
         .min(6, 'Password must be at least 6 characters')
         .max(100, 'Password must be less than 100 characters')
         .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one uppercase letter, one lowercase letter, and one number')
-        .optional()
+        .optional(),
+        image: z.union([z.instanceof(File), z.string()]).optional()
     });
     
-    export const staffIdSchema = z.object({
-      id: z.string().min(1, 'Staff ID is required')
-    });
-    
-    export const staffUsernameSchema = z.object({
-      username: z.string().min(1, 'Username is required')
-    });
+
     
     export type CreateStaffFormValues = z.infer<typeof createStaffSchema>;
     export type UpdateStaffFormValues = z.infer<typeof updateStaffSchema>;
-    export type StaffIdValues = z.infer<typeof staffIdSchema>;
-    export type StaffUsernameValues = z.infer<typeof staffUsernameSchema>;
+
