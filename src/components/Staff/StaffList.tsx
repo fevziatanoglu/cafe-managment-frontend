@@ -123,7 +123,7 @@ export default function StaffList() {
                         </div>
                     ) : (
                         filteredStaff.map((member) => (
-                            <StaffItem key={member.id} staff={member} />
+                            <StaffItem key={member._id} staff={member} />
                         ))
                     )}
                 </div>
