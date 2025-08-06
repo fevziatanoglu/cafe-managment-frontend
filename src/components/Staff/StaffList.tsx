@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Coffee } from 'lucide-react';
 import useStore from '../../store';
 import StaffForm from './StaffForm';
@@ -10,7 +10,6 @@ import type { STAFF } from '../../types';
 export default function StaffList() {
     const {
         staff,
-        getStaffFetch,
         isStaffLoading,
         openModal
     } = useStore();
@@ -20,10 +19,7 @@ export default function StaffList() {
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Load staff on component mount
-    useEffect(() => {
-        getStaffFetch();
-    }, [getStaffFetch]);
+ 
 
     const sortOptions = [
         { value: 'username', label: 'Name' },
