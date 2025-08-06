@@ -6,7 +6,7 @@ import type { CreateStaffFormValues, UpdateStaffFormValues } from '../validation
 // Get all staff (workers)
 export const getStaff = async (): Promise<API_RESPONSE<STAFF[]>> => {
   try {
-    const response = await requestApi.get('/workers');
+    const response = await requestApi.get('/staff');
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -16,7 +16,7 @@ export const getStaff = async (): Promise<API_RESPONSE<STAFF[]>> => {
 // Get staff by ID
 export const getStaffById = async (id: string): Promise<API_RESPONSE<STAFF>> => {
   try {
-    const response = await requestApi.get(`/workers/${id}`);
+    const response = await requestApi.get(`/staff/${id}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -26,7 +26,7 @@ export const getStaffById = async (id: string): Promise<API_RESPONSE<STAFF>> => 
 // Get staff by username
 export const getStaffByUsername = async (username: string): Promise<API_RESPONSE<STAFF>> => {
   try {
-    const response = await requestApi.get(`/workers/username/${username}`);
+    const response = await requestApi.get(`/staff/username/${username}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -34,9 +34,9 @@ export const getStaffByUsername = async (username: string): Promise<API_RESPONSE
 };
 
 // Create new staff member
-export const createStaff = async (staffData: CreateStaffFormValues): Promise<API_RESPONSE<STAFF>> => {
+export const createStaff = async (staffData: CreateStaffFormValues | FormData): Promise<API_RESPONSE<STAFF>> => {
   try {
-    const response = await requestApi.post('/workers', staffData);
+    const response = await requestApi.post('/staff', staffData);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -44,9 +44,9 @@ export const createStaff = async (staffData: CreateStaffFormValues): Promise<API
 };
 
 // Update staff member
-export const updateStaff = async (id: string, staffData: UpdateStaffFormValues): Promise<API_RESPONSE<STAFF>> => {
+export const updateStaff = async (id: string, staffData: UpdateStaffFormValues | FormData): Promise<API_RESPONSE<STAFF>> => {
   try {
-    const response = await requestApi.put(`/workers/${id}`, staffData);
+    const response = await requestApi.put(`/staff/${id}`, staffData);
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -56,7 +56,7 @@ export const updateStaff = async (id: string, staffData: UpdateStaffFormValues):
 // Delete staff member
 export const deleteStaff = async (id: string): Promise<API_RESPONSE<STAFF>> => {
   try {
-    const response = await requestApi.delete(`/workers/${id}`);
+    const response = await requestApi.delete(`/staff/${id}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);

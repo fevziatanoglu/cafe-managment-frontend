@@ -27,8 +27,8 @@ interface StaffActions {
   getStaffByUsernameFetch: (username: string) => Promise<API_RESPONSE<STAFF>>;
 
   // CRUD operations
-  createStaffFetch: (staffData: CreateStaffFormValues) => Promise<API_RESPONSE<STAFF>>;
-  updateStaffFetch: (id: string, staffData: UpdateStaffFormValues) => Promise<API_RESPONSE<STAFF>>;
+  createStaffFetch: (staffData: CreateStaffFormValues | FormData) => Promise<API_RESPONSE<STAFF>>;
+updateStaffFetch: (id: string, staffData: UpdateStaffFormValues | FormData) => Promise<API_RESPONSE<STAFF>>;
   deleteStaffFetch: (id: string) => Promise<API_RESPONSE<STAFF>>;
 
   // Utility actions
@@ -92,7 +92,7 @@ export const createStaffSlice: StateCreator<StaffState & StaffActions> = (set, g
   },
 
   // Create new staff
-  createStaffFetch: async (staffData: CreateStaffFormValues) => {
+  createStaffFetch: async (staffData: CreateStaffFormValues | FormData) => {
     const response = await createStaff(staffData);
 
     if (response.success && response.data) {
@@ -105,7 +105,7 @@ export const createStaffSlice: StateCreator<StaffState & StaffActions> = (set, g
   },
 
   // Update staff
-  updateStaffFetch: async (id: string, staffData: UpdateStaffFormValues) => {
+  updateStaffFetch: async (id: string, staffData: UpdateStaffFormValues | FormData) => {
     const response = await updateStaff(id, staffData);
 
     if (response.success && response.data) {
