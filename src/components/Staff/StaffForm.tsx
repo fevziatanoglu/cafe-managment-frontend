@@ -3,12 +3,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, UserCheck, ChevronDown } from 'lucide-react';
 import useStore from '../../store';
-import type { USER } from '../../types/User';
-import { createStaffSchema, updateStaffSchema, type CreateStaffFormValues, type UpdateStaffFormValues } from '../../validations/staffScherma';
+import type { STAFF } from '../../types/Staff';
+import { createStaffSchema, type CreateStaffFormValues } from '../../validations/staffScherma';
 import ErrorBox from '../Auth/ErrorBox';
 
 interface StaffFormProps {
-  staff?: USER | null;
+  staff?: STAFF | null;
   mode: 'create' | 'edit';
 }
 
@@ -17,36 +17,43 @@ export default function StaffForm({ staff, mode }: StaffFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(staff?.image ?? null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
-  const schema = mode === 'edit' ? updateStaffSchema : createStaffSchema;
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateStaffFormValues | UpdateStaffFormValues>({
-    resolver: zodResolver(schema),
-    defaultValues: mode === 'edit' && staff
-      ? {
-          username: staff.username,
-          email: staff.email,
-          role: staff.role as 'waiter' | 'kitchen',
-          password: '',
-        }
-      : {
-          username: '',
-          email: '',
-          password: '',
-          role: 'waiter',
-        },
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<CreateStaffFormValues>({
+    resolver: zodResolver(createStaffSchema),
+    defaultValues: {
+      username: staff?.username || '',
+      email: staff?.email || '',
+      role: staff?.role || 'waiter',
+      password: staff?.password || '',
+      image: staff?.image || '',
+    },
   });
 
-  const onSubmit = async (data: CreateStaffFormValues | UpdateStaffFormValues) => {
+  const onSubmit = async (data: CreateStaffFormValues) => {
     setIsLoading(true);
     setError(null);
 
     try {
       let response;
-      if (mode === 'edit' && staff) {
-        response = await updateStaffFetch(staff.id, data as UpdateStaffFormValues);
+      if (staff) {
+        response = await updateStaffFetch(staff._id, {
+          username: data.username,
+          email: data.email,
+          role: data.role,
+          password: data.password || undefined, 
+          image: imageFile || "",
+        });
       } else {
-        response = await createStaffFetch(data as CreateStaffFormValues);
+        response = await createStaffFetch({
+          username: data.username,
+          email: data.email,
+          role: data.role,
+          password: data.password,
+          image: "",
+        });
       }
 
       if (response.success) {
@@ -63,7 +70,7 @@ export default function StaffForm({ staff, mode }: StaffFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6" encType="multipart/form-data">
       {error && <ErrorBox message={error} />}
 
       {/* Username Field */}
@@ -207,6 +214,32 @@ export default function StaffForm({ staff, mode }: StaffFormProps) {
             <span className="mr-1">⚠️</span>
             {errors.role.message}
           </p>
+        )}
+      </div>
+
+      {/* Image Field */}
+      <div>
+        <label className="block text-sm font-medium text-amber-700 mb-2">
+          Profile Image
+        </label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={e => {
+            const file = e.target.files?.[0];
+            if (file) {
+              setImageFile(file);
+              setImagePreview(URL.createObjectURL(file));
+            }
+          }}
+          className="w-full py-2 px-3 border rounded-lg border-amber-300"
+        />
+        {imagePreview && (
+          <img
+            src={imagePreview}
+            alt="Preview"
+            className="mt-2 h-16 w-16 rounded-full object-cover border border-amber-300"
+          />
         )}
       </div>
 
