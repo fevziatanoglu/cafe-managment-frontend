@@ -1,5 +1,5 @@
 import type { StateCreator } from "zustand";
-import type { API_RESPONSE } from "../../types";
+import type { API_RESPONSE, ORDER } from "../../types";
 import type { TABLE, TABLE_WITH_ORDERS } from "../../types/Table";
 import type { TableFormData } from "../../validations/tableSchema";
 import {
@@ -10,12 +10,15 @@ import {
   deleteTable,
   getTablesWithOrders,
 } from "../../api/tablesService";
+import { getOrdersByTableId } from "../../api/orderService";
 
 interface TableState {
   tables: TABLE[];
   tablesWithOrders?: TABLE_WITH_ORDERS[];
   selectedTable: TABLE | null;
   isTablesLoading: boolean;
+  isTableOrdersLoading: boolean;
+  selectedTableOrders?: ORDER[];
 }
 
 interface TableActions {
@@ -26,6 +29,8 @@ interface TableActions {
   deleteTableFetch: (id: string) => Promise<API_RESPONSE<TABLE>>;
   setSelectedTable: (table: TABLE | null) => void;
   getTablesWithOrders: () => Promise<API_RESPONSE<TABLE_WITH_ORDERS[]>>;
+  getTableOrdersFetch: (tableId: string) => Promise<API_RESPONSE<ORDER[]>>;
+
 }
 
 export type TableStore = TableState & TableActions;
@@ -34,7 +39,9 @@ export const createTableSlice: StateCreator<TableStore> = (set, get) => ({
   tables: [],
   tablesWithOrders: [],
   selectedTable: null,
+  selectedTableOrders: [],
   isTablesLoading: false,
+  isTableOrdersLoading: false,
 
   getTablesFetch: async () => {
     set({ isTablesLoading: true });
@@ -74,7 +81,7 @@ export const createTableSlice: StateCreator<TableStore> = (set, get) => ({
     const response = await updateTable(id, tableData);
     if (response.success && response.data) {
       set({
-        tablesWithOrders: get().tablesWithOrders?.map((t) => 
+        tablesWithOrders: get().tablesWithOrders?.map((t) =>
           t._id === id ? { ...response.data!, orders: t.orders } : t
         ),
         selectedTable: response.data,
@@ -106,5 +113,15 @@ export const createTableSlice: StateCreator<TableStore> = (set, get) => ({
     }
     set({ isTablesLoading: false });
     return response;
-  }
+  },
+  getTableOrdersFetch: async (tableId: string) => {
+    set({ isTableOrdersLoading: true });
+    const response = await getOrdersByTableId(tableId);
+    if (response.success && response.data) {
+      set({ selectedTableOrders: response.data });
+    }
+    set({ isTableOrdersLoading: false });
+    return response;
+  },
+
 });

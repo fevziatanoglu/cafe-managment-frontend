@@ -65,4 +65,14 @@ export const getPendingOrders = async (): Promise<API_RESPONSE<ORDER[]>> => {
   }
 };
 
+// Get orders by table ID
+export const getOrdersByTableId = async (tableId: string): Promise<API_RESPONSE<ORDER[]>> => {
+  try {
+    const response = await requestApi.get(`/orders/table/${tableId}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
+
 
