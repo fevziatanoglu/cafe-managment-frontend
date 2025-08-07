@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Coffee, Edit2, Trash2, MoreVertical, Clock, Utensils, Calendar, CheckCircle } from 'lucide-react';
+import { Coffee, Edit2, Trash2, MoreVertical, Clock, Utensils, Calendar, CheckCircle, ReceiptIcon } from 'lucide-react';
 import type { TABLE_STATUS, TABLE_WITH_ORDERS } from '../../types/Table';
 import useStore from '../../store';
 import TableForm from './TableForm';
+import TablePayModal from './TablePayModal';
 
 interface TableCardProps {
   table: TABLE_WITH_ORDERS;
@@ -107,7 +108,7 @@ export default function TableItem({ table }: TableCardProps) {
         <button
           onClick={() => setShowActions(!showActions)}
           className="p-2 rounded-full bg-white/80 hover:bg-white shadow-lg transition-colors backdrop-blur-sm hover:cursor-pointer "
-          >
+        >
           <MoreVertical className="h-4 w-4 text-gray-600" />
         </button>
 
@@ -143,7 +144,7 @@ export default function TableItem({ table }: TableCardProps) {
               <div className="text-2xl font-bold text-amber-900 mb-1">
                 {table.number}
               </div>
-              
+
               {/* Status Icon */}
               <div>
                 {getStatusIcon(table.status)}
@@ -152,6 +153,18 @@ export default function TableItem({ table }: TableCardProps) {
           </div>
         </div>
       </div>
+
+
+      {table.status === 'occupied' && (
+        <button
+          onClick={() => { openModal(<TablePayModal table={table} orders={table.orders} />, 'Pay Table', 'full') }}
+          className="flex items-center justify-center space-x-2 px-4 py-3 my-4 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-emerald-600 hover:via-green-600 hover:to-emerald-700 transition-all duration-300 border-2 border-emerald-400 shadow-lg hover:cursor-pointer hover:scale-105 active:scale-95"
+          title="Process Payment"
+        >
+          <ReceiptIcon className="h-5 w-5" />
+          <span>Pay Table</span>
+        </button>
+      )}
 
       {/* Active Orders Section - Only show if there are orders */}
       {table.orders.length > 0 && (
@@ -165,17 +178,16 @@ export default function TableItem({ table }: TableCardProps) {
               {table.orders.length}
             </span>
           </div>
-          
+
           <div className="space-y-2 max-h-24 overflow-y-auto">
             {table.orders.slice(0, 3).map(order => (
               <div key={order._id} className="bg-white/90 rounded-lg p-2 border border-gray-200">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center space-x-2">
-                    <span className={`w-3 h-3 rounded-full ${
-                      order.status === 'pending' ? 'bg-yellow-400' :
+                    <span className={`w-3 h-3 rounded-full ${order.status === 'pending' ? 'bg-yellow-400' :
                       order.status === 'preparing' ? 'bg-blue-400' :
-                      order.status === 'served' ? 'bg-green-400' : 'bg-gray-400'
-                    }`}></span>
+                        order.status === 'served' ? 'bg-green-400' : 'bg-gray-400'
+                      }`}></span>
                     <span className="text-sm font-medium text-gray-700">
                       #{order._id.slice(-4)}
                     </span>
