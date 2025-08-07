@@ -5,10 +5,11 @@ interface ModalState {
   isModalOpen: boolean;
   modalContent: ReactNode | null;
   modalTitle: string;
+  modalSize : "sm" | "md" | "lg" | "full";
 }
 
 interface ModalActions {
-  openModal: (content: ReactNode, title: string) => void;
+  openModal: (content: ReactNode, title: string, size?: "sm" | "md" | "lg" | "full") => void;
   closeModal: () => void;
 }
 
@@ -19,11 +20,13 @@ export const createModalSlice: StateCreator<ModalState & ModalActions> = (set) =
   isModalOpen: false,
   modalContent: null,
   modalTitle: "",
-  openModal: (content, title) => {
+  modalSize: "md",
+  openModal: (content, title , size?) => {
     set({
       isModalOpen: true,
       modalContent: content,
       modalTitle: title,
+      modalSize: size || "md", 
     });
   },
   closeModal: () => {
