@@ -17,6 +17,7 @@ export type ORDER_STATUS = 'pending' | 'preparing' | 'served' | 'paid';
 
 export type ORDER_ITEM = {
   productId: string;
+  orderId: string;
   productName: string;      
   quantity: number;
   price: number;        
