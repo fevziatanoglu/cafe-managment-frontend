@@ -3,7 +3,7 @@ import { Coffee, Edit2, Trash2, MoreVertical, Clock, Utensils, Calendar, CheckCi
 import type { TABLE_STATUS, TABLE_WITH_ORDERS } from '../../types/Table';
 import useStore from '../../store';
 import TableForm from './TableForm';
-import TablePayModal from './TablePayModal';
+import OrdersPayModal from '../Orders/OrderPayModal';
 
 interface TableCardProps {
   table: TABLE_WITH_ORDERS;
@@ -157,7 +157,7 @@ export default function TableItem({ table }: TableCardProps) {
 
       {table.status === 'occupied' && (
         <button
-          onClick={() => { openModal(<TablePayModal table={table} orders={table.orders} />, 'Pay Table', 'full') }}
+          onClick={() => { openModal(<OrdersPayModal table={table} orders={table.orders} />, 'Pay Table', 'full') }}
           className="flex items-center justify-center space-x-2 px-4 py-3 my-4 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-emerald-600 hover:via-green-600 hover:to-emerald-700 transition-all duration-300 border-2 border-emerald-400 shadow-lg hover:cursor-pointer hover:scale-105 active:scale-95"
           title="Process Payment"
         >
