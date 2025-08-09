@@ -157,7 +157,7 @@ export default function TableItem({ table }: TableCardProps) {
 
       {table.status === 'occupied' && (
         <button
-          onClick={() => { openModal(<OrdersPayModal table={table} orders={table.orders} />, 'Pay Table', 'full') }}
+          onClick={() => { openModal(<OrdersPayModal table={table} orders={table.orders} />, 'Pay Table', '2xl') }}
           className="flex items-center justify-center space-x-2 px-4 py-3 my-4 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-emerald-600 hover:via-green-600 hover:to-emerald-700 transition-all duration-300 border-2 border-emerald-400 shadow-lg hover:cursor-pointer hover:scale-105 active:scale-95"
           title="Process Payment"
         >

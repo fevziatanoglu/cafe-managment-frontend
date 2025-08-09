@@ -5,11 +5,11 @@ interface ModalState {
   isModalOpen: boolean;
   modalContent: ReactNode | null;
   modalTitle: string;
-  modalSize : "sm" | "md" | "lg" | "full";
+  modalSize : "sm" | "md" | "lg" | "2xl" | "full";
 }
 
 interface ModalActions {
-  openModal: (content: ReactNode, title: string, size?: "sm" | "md" | "lg" | "full") => void;
+  openModal: (content: ReactNode, title: string, size?: "sm" | "md" | "lg" | "2xl" | "full") => void;
   closeModal: () => void;
 }
 
