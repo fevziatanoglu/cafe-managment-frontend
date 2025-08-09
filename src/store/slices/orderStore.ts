@@ -7,11 +7,13 @@ import {
   updateOrder,
   deleteOrder,
   createPaidOrder,
+  getPaidOrders,
 } from "../../api/orderService";
 import type { CreateOrderFormValues, UpdateOrderFormValues } from "../../validations/orderSchema";
 
 interface OrderState {
   orders: ORDER[];
+  paidOrders: ORDER[];
   pendingOrders: ORDER[];
   selectedOrder: ORDER | null;
   isOrdersLoading: boolean;
@@ -19,8 +21,8 @@ interface OrderState {
 
 interface OrderActions {
   getOrdersFetch: () => Promise<API_RESPONSE<ORDER[]>>;
-  getPendingOrdersFetch: () => Promise<API_RESPONSE<ORDER[]>>;
   getOrderByIdFetch: (id: string) => Promise<API_RESPONSE<ORDER>>;
+  getPaidOrdersFetch: () => Promise<API_RESPONSE<ORDER[]>>;
   createOrderFetch: (orderData: CreateOrderFormValues) => Promise<API_RESPONSE<ORDER>>;
   updateOrderFetch: (id: string, orderData: UpdateOrderFormValues) => Promise<API_RESPONSE<ORDER>>;
   deleteOrderFetch: (id: string) => Promise<API_RESPONSE<ORDER>>;
@@ -32,6 +34,7 @@ export type OrderStore = OrderState & OrderActions;
 
 export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
   orders: [],
+  paidOrders: [],
   pendingOrders: [],
   selectedOrder: null,
   isOrdersLoading: false,
@@ -67,17 +70,6 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
     return response;
   },
 
-  getPendingOrdersFetch: async () => {
-    set({ isOrdersLoading: true });
-    const response = await getOrders();
-    if (response.success && response.data) {
-      const pendingOrders = response.data.filter(order => order.status === 'pending');
-      set({ pendingOrders: pendingOrders });
-    }
-    set({ isOrdersLoading: false });
-    return response;
-  },
-
   updateOrderFetch: async (id, orderData) => {
     const response = await updateOrder(id, orderData);
     if (response.success && response.data) {
@@ -101,6 +93,16 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
 
   setSelectedOrder: (order) => {
     set({ selectedOrder: order });
+  },
+
+  getPaidOrdersFetch: async () => {
+    set({ isOrdersLoading: true });
+    const response = await getPaidOrders();
+    if (response.success && response.data) {
+      set({ paidOrders: response.data });
+    }
+    set({ isOrdersLoading: false });
+    return response;
   },
 
   // Create paid order

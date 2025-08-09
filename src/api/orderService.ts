@@ -55,20 +55,20 @@ export const deleteOrder = async (id: string): Promise<API_RESPONSE<ORDER>> => {
 };
 
 
-// Get waiting orders
-export const getPendingOrders = async (): Promise<API_RESPONSE<ORDER[]>> => {
+// Get orders by table ID
+export const getOrdersByTableId = async (tableId: string): Promise<API_RESPONSE<ORDER[]>> => {
   try {
-    const response = await requestApi.get('/orders/pending');
+    const response = await requestApi.get(`/orders/table/${tableId}`);
     return response.data;
   } catch (error) {
     return handleApiError(error);
   }
 };
 
-// Get orders by table ID
-export const getOrdersByTableId = async (tableId: string): Promise<API_RESPONSE<ORDER[]>> => {
+// Get paid orders
+export const getPaidOrders = async (): Promise<API_RESPONSE<ORDER[]>> => {
   try {
-    const response = await requestApi.get(`/orders/table/${tableId}`);
+    const response = await requestApi.get('/orders/paid');
     return response.data;
   } catch (error) {
     return handleApiError(error);
@@ -82,7 +82,7 @@ export const createPaidOrder = async (orderData: {
   items: { productId: string; quantity: number }[];
 }): Promise<API_RESPONSE<ORDER>> => {
   try {
-    const response = await requestApi.post('/orders/paid', orderData);
+    const response = await requestApi.post('/orders/pay', orderData);
     return response.data;
   } catch (error) {
     return handleApiError(error);
