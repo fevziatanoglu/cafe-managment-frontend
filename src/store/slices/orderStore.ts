@@ -6,6 +6,7 @@ import {
   createOrder,
   updateOrder,
   deleteOrder,
+  createPaidOrder,
 } from "../../api/orderService";
 import type { CreateOrderFormValues, UpdateOrderFormValues } from "../../validations/orderSchema";
 
@@ -24,6 +25,7 @@ interface OrderActions {
   updateOrderFetch: (id: string, orderData: UpdateOrderFormValues) => Promise<API_RESPONSE<ORDER>>;
   deleteOrderFetch: (id: string) => Promise<API_RESPONSE<ORDER>>;
   setSelectedOrder: (order: ORDER | null) => void;
+  createPaidOrderFetch: (orderData: { tableId: string; tableNumber: string; items: { productId: string; quantity: number }[] }) => Promise<API_RESPONSE<ORDER>>;
 }
 
 export type OrderStore = OrderState & OrderActions;
@@ -99,5 +101,17 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
 
   setSelectedOrder: (order) => {
     set({ selectedOrder: order });
+  },
+
+  // Create paid order
+  createPaidOrderFetch: async (orderData: { tableId: string; tableNumber: string; items: { productId: string; quantity: number }[] }) => {
+    set({ isOrdersLoading: true });
+    const response = await createPaidOrder(orderData);
+    if (response.success && response.data) {
+      const currentOrders = get().orders;
+      set({ orders: [...currentOrders, response.data] });
+    }
+    set({ isOrdersLoading: false });
+    return response;
   },
 });

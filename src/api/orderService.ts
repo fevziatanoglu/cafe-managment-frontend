@@ -75,4 +75,16 @@ export const getOrdersByTableId = async (tableId: string): Promise<API_RESPONSE<
   }
 };
 
-
+// Create paid order
+export const createPaidOrder = async (orderData: {
+  tableId: string;
+  tableNumber: string;
+  items: { productId: string; quantity: number }[];
+}): Promise<API_RESPONSE<ORDER>> => {
+  try {
+    const response = await requestApi.post('/orders/paid', orderData);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
