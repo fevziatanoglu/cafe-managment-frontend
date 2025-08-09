@@ -18,7 +18,7 @@ function getStatusBadgeColor(status: string) {
         case 'served':
             return 'bg-green-100 text-green-800 border-green-300';
         case 'paid':
-            return 'bg-gray-100 text-gray-800 border-gray-300';
+            return 'bg-gradient-to-r from-green-300 via-yellow-200 to-green-400 text-green-900 border-yellow-400';
         default:
             return 'bg-gray-100 text-gray-800 border-gray-300';
     }
@@ -33,7 +33,7 @@ function getHeaderBackgroundColor(status: string) {
         case 'served':
             return 'bg-gradient-to-r from-green-100 to-green-200';
         case 'paid':
-            return 'bg-gradient-to-r from-gray-50 to-gray-100';
+            return 'bg-gradient-to-r from-green-100 via-yellow-50 to-green-200';
         default:
             return 'bg-gradient-to-r from-amber-50 to-orange-50';
     }
@@ -209,34 +209,36 @@ const OrderItem: React.FC<OrderItemProps> = ({ order }) => {
             </div>
 
             {/* Actions - Always at bottom */}
-            <div className="border-t-2 border-amber-200 pt-4 px-6 bg-amber-50 mt-auto">
-                <div className="flex flex-row gap-2 justify-center w-full pb-4">
-                    <button
-                        onClick={() => handleAction('pending')}
-                        className="flex items-center space-x-1 px-1 lg:px-3 py-3 hover:cursor-pointer text-xs md:text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
-                        disabled={order.status === 'pending'}
-                    >
-                        <Clock className="h-4 w-4" />
-                        <span>Pending</span>
-                    </button>
-                    <button
-                        onClick={() => handleAction('preparing')}
-                        className="flex items-center space-x-1 px-1 lg:px-3 py-2 hover:cursor-pointer text-xs md:text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
-                        disabled={order.status === 'preparing'}
-                    >
-                        <ChefHat className="h-4 w-4" />
-                        <span>Preparing</span>
-                    </button>
-                    <button
-                        onClick={() => handleAction('served')}
-                        className="flex items-center space-x-1 px-1 lg:px-3 py-2 hover:cursor-pointer text-xs md:text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
-                        disabled={order.status === 'served'}
-                    >
-                        <CheckCircle className="h-4 w-4" />
-                        <span>Served</span>
-                    </button>
+            {order.status !== 'paid' && (
+                <div className="border-t-2 border-amber-200 pt-4 px-6 bg-amber-50 mt-auto">
+                    <div className="flex flex-row gap-2 justify-center w-full pb-4">
+                        <button
+                            onClick={() => handleAction('pending')}
+                            className="flex items-center space-x-1 px-1 lg:px-3 py-3 hover:cursor-pointer text-xs md:text-sm bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
+                            disabled={order.status === 'pending'}
+                        >
+                            <Clock className="h-4 w-4" />
+                            <span>Pending</span>
+                        </button>
+                        <button
+                            onClick={() => handleAction('preparing')}
+                            className="flex items-center space-x-1 px-1 lg:px-3 py-2 hover:cursor-pointer text-xs md:text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
+                            disabled={order.status === 'preparing'}
+                        >
+                            <ChefHat className="h-4 w-4" />
+                            <span>Preparing</span>
+                        </button>
+                        <button
+                            onClick={() => handleAction('served')}
+                            className="flex items-center space-x-1 px-1 lg:px-3 py-2 hover:cursor-pointer text-xs md:text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium"
+                            disabled={order.status === 'served'}
+                        >
+                            <CheckCircle className="h-4 w-4" />
+                            <span>Served</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

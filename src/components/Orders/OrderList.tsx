@@ -8,12 +8,44 @@ import OrderForm from './OrderForm';
 import { GenericFilter, type FilterOption } from '../Common/GenericFilter';
 
 export default function OrderList() {
-  const { orders, isOrdersLoading, openModal } = useStore();
+  function getFilteredSortedOrders(
+    orders: ORDER[],
+    searchTerm: string,
+    selectedStatus: 'all' | ORDER_STATUS,
+    sortBy: 'createdAt' | 'total' | 'tableId' | 'status',
+    sortOrder: 'asc' | 'desc'
+  ): ORDER[] {
+    return orders
+      .filter(order => {
+        const matchesSearch =
+          order.tableName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (order.createdBy?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
+        const matchesStatus =
+          selectedStatus === 'all'
+            ? true
+            : order.status === selectedStatus;
+        return matchesSearch && matchesStatus;
+      })
+      .sort((a, b) => {
+        const aValue = a[sortBy];
+        const bValue = b[sortBy];
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+        }
+        if (typeof aValue === 'number' && typeof bValue === 'number') {
+          return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+        }
+        return 0;
+      });
+  }
+  const { orders, paidOrders , getPaidOrdersFetch, isOrdersLoading, openModal } = useStore();
 
   const [selectedStatus, setSelectedStatus] = useState<'all' | ORDER_STATUS>('all');
   const [sortBy, setSortBy] = useState<'createdAt' | 'total' | 'tableId' | 'status'>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [showPaidOrders, setShowPaidOrders] = useState(false);
 
   const sortOptions = [
     { value: 'createdAt', label: 'Order Date' },
@@ -27,37 +59,27 @@ export default function OrderList() {
     { value: 'pending', label: 'Pending', count: orders.filter(o => o.status === 'pending').length, color: 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200', icon: '⏳' },
     { value: 'preparing', label: 'Preparing', count: orders.filter(o => o.status === 'preparing').length, color: 'bg-blue-100 text-blue-700 hover:bg-blue-200', icon: '👨‍🍳' },
     { value: 'served', label: 'Served', count: orders.filter(o => o.status === 'served').length, color: 'bg-green-100 text-green-700 hover:bg-green-200', icon: '✅' },
-    { value: 'paid', label: 'Paid', count: orders.filter(o => o.status === 'paid').length, color: 'bg-gray-100 text-gray-700 hover:bg-gray-200', icon: '💰' }
   ];
 
   const onStatusChange = (status: 'all' | ORDER_STATUS) => {
     setSelectedStatus(status);
   };
 
-  let filteredOrders = orders.filter(order => {
-    const matchesSearch =
-      order.tableName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (order.createdBy?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false);
-    const matchesStatus =
-      selectedStatus === 'all'
-        ? true
-        : order.status === selectedStatus;
-    return matchesSearch && matchesStatus;
-  });
+    const filteredOrders = getFilteredSortedOrders(
+      showPaidOrders ? paidOrders : orders,
+      searchTerm,
+      selectedStatus,
+      sortBy,
+      sortOrder
+    );
 
-  filteredOrders = filteredOrders.sort((a: ORDER, b: ORDER) => {
-    const aValue = a[sortBy];
-    const bValue = b[sortBy];
-    if (typeof aValue === 'string' && typeof bValue === 'string') {
-      if (sortOrder === 'asc') return aValue.localeCompare(bValue);
-      else return bValue.localeCompare(aValue);
+  const handleTogglePaidOrders = async () => {
+    if (!showPaidOrders && paidOrders.length === 0) {
+      await getPaidOrdersFetch();
     }
-    if (typeof aValue === 'number' && typeof bValue === 'number') {
-      if (sortOrder === 'asc') return aValue - bValue;
-      else return bValue - aValue;
-    }
-    return 0;
-  });
+    setShowPaidOrders(prev => !prev);
+    setSelectedStatus('all');
+  };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow">
@@ -75,11 +97,24 @@ export default function OrderList() {
         sortOptions={sortOptions}
       />
 
-      <div className="mb-4">
-        <p className="text-sm text-amber-600">
-          Showing {filteredOrders.length} of {orders.length} orders
+
+
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-sm text-green-600">
+          {showPaidOrders
+            ? `Showing ${filteredOrders.length} of ${paidOrders.length} paid orders`
+            : `Showing ${filteredOrders.length} of ${orders.length} orders`}
         </p>
+        <button
+          className={`px-3 py-1 rounded text-sm font-medium ${showPaidOrders ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' : 'bg-green-100 text-green-700 hover:bg-green-200'}`}
+          onClick={handleTogglePaidOrders}
+          type="button"
+        >
+          {showPaidOrders ? 'Show All Orders' : 'Show Paid Orders'}
+        </button>
       </div>
+
+
 
       {isOrdersLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-4">
