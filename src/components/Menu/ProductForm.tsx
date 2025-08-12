@@ -29,8 +29,8 @@ export default function ProductForm({ product }: ProductFormProps) {
     defaultValues: {
       name: "",
       description: "",
+      category: undefined,
       price: 1,
-      category: "",
     },
   });
 
@@ -39,7 +39,7 @@ export default function ProductForm({ product }: ProductFormProps) {
       setValue("name", product.name || "");
       setValue("description", product.description || "");
       setValue("price", product.price || 1);
-      setValue("category", product.category || "");
+      setValue("category", product.category);
       setImage(product.image || "");
     }
   }, [product, setValue]);
@@ -148,12 +148,19 @@ export default function ProductForm({ product }: ProductFormProps) {
           <ImageInput value={image} onChange={setImage}/>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-            <input
+            <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+            <select
               {...register("category")}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-              placeholder="Category"
-            />
+              defaultValue={product?.category || ""}
+            >
+              <option value="" disabled>Select category</option>
+              <option value="hot drink">Hot Drink</option>
+              <option value="cold drink">Cold Drink</option>
+              <option value="dessert">Dessert</option>
+              <option value="food">Food</option>
+            </select>
+            {errors.category && <p className="mt-1 text-xs text-red-600">{errors.category.message}</p>}
           </div>
         </div>
 

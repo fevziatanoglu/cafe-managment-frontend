@@ -1,16 +1,48 @@
 import React, { useState } from "react";
-import type { PRODUCT } from "../../types";
+import type { PRODUCT, PRODUCT_CATEGORY } from "../../types";
 import ProductItem from "./ProductItem";
 import ProductItemSkeleton from "./ProductItemSkeleton";
 import { GenericFilter, type FilterOption } from "../Common/GenericFilter";
 import useStore from "../../store";
 import ProductForm from "./ProductForm";
+import { Coffee, CupSoda, IceCream, Utensils } from "lucide-react";
 
-// Dummy data for status options they will be change
-const dummyStatusOptions: FilterOption<string>[] = [
-  { value: "all", label: "All", count: undefined, color: "bg-gray-100 text-gray-700 hover:bg-gray-200", icon: "📦" },
-  { value: "active", label: "Active", count: undefined, color: "bg-green-100 text-green-700 hover:bg-green-200", icon: "✅" },
-  { value: "inactive", label: "Inactive", count: undefined, color: "bg-gray-100 text-gray-700 hover:bg-gray-200", icon: "🚫" }
+const productCategoryOptions: FilterOption<PRODUCT_CATEGORY | "all">[] = [
+  {
+    value: "all",
+    label: "All",
+    count: undefined,
+    color: "bg-gray-100 text-gray-700 hover:bg-gray-200",
+    icon: <Coffee className="w-4 h-4" />, // You can use a generic icon for "All"
+  },
+  {
+    value: "hot drink",
+    label: "Hot Drink",
+    count: undefined,
+    color: "bg-red-100 text-red-700 hover:bg-red-200",
+    icon: <Coffee className="w-4 h-4" />,
+  },
+  {
+    value: "cold drink",
+    label: "Cold Drink",
+    count: undefined,
+    color: "bg-blue-100 text-blue-700 hover:bg-blue-200",
+    icon: <CupSoda className="w-4 h-4" />,
+  },
+  {
+    value: "dessert",
+    label: "Dessert",
+    count: undefined,
+    color: "bg-yellow-100 text-yellow-700 hover:bg-yellow-200",
+    icon: <IceCream className="w-4 h-4" />,
+  },
+  {
+    value: "food",
+    label: "Food",
+    count: undefined,
+    color: "bg-green-100 text-green-700 hover:bg-green-200",
+    icon: <Utensils className="w-4 h-4" />,
+  },
 ];
 
 const sortOptions = [
@@ -25,14 +57,15 @@ interface ProductListProps {
 
 const ProductList: React.FC<ProductListProps> = ({ products }) => {
   const { openModal, isProductsLoading } = useStore();
-  const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [selectedCategory, setSelectedCategory] = useState<PRODUCT_CATEGORY | "all">("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<string>("name");
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   let filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    const matchesCategory = selectedCategory === "all" || product.category === selectedCategory;
+    return matchesSearch && matchesCategory;
   });
 
   filteredProducts = filteredProducts.sort((a, b) => {
@@ -51,13 +84,16 @@ const ProductList: React.FC<ProductListProps> = ({ products }) => {
     return 0;
   });
 
+  const onCategoryChange = (category: 'all' | PRODUCT_CATEGORY) => {
+      setSelectedCategory(category);
+    };
 
   return (
     <div>
       <GenericFilter
-        options={dummyStatusOptions}
-        selected={selectedStatus}
-        onChange={setSelectedStatus}
+        options={productCategoryOptions}
+        selected={selectedCategory}
+        onChange={onCategoryChange}
         onOpenModal={() => openModal(<ProductForm />, "Create New Order")}
         createLabel="Create Product"
         searchTerm={searchTerm}

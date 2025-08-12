@@ -1,4 +1,4 @@
-import type { PRODUCT } from "../../types/Product";
+import type { PRODUCT, PRODUCT_CATEGORY } from "../../types/Product";
 import { Coffee, Edit2, Trash2 } from "lucide-react";
 import ProductForm from "./ProductForm";
 import useStore from "../../store";
@@ -7,16 +7,16 @@ interface ProductItemProps {
   product: PRODUCT;
 }
 
-const getCategoryColor = (category: string) => {
+const getCategoryColor = (category?: PRODUCT_CATEGORY) => {
   switch (category) {
-    case 'Beverage':
-      return 'bg-blue-100 text-blue-700';
-    case 'Food':
-      return 'bg-orange-100 text-orange-700';
-    case 'Dessert':
-      return 'bg-pink-100 text-pink-700';
-    case 'Snack':
-      return 'bg-purple-100 text-purple-700';
+    case 'hot drink':
+      return 'bg-red-100 text-red-700'; // red for hot
+    case 'cold drink':
+      return 'bg-blue-100 text-blue-700'; // blue for cold
+    case 'dessert':
+      return 'bg-yellow-100 text-yellow-700'; // yellow for dessert
+    case 'food':
+      return 'bg-green-100 text-green-700'; // green for food
     default:
       return 'bg-gray-100 text-gray-700';
   }
@@ -60,8 +60,8 @@ function ProductItem({ product }: ProductItemProps) {
       <div className="flex flex-col justify-between flex-1 pl-6">
         <div>
           <h3 className="text-lg font-bold text-gray-900">{product.name}</h3>
-          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(product.category || "Uncategorized")}`}>
-            {product.category || "Uncategorized"}
+          <span className={`px-3 py-1 rounded-full text-xs font-medium ${getCategoryColor(product.category)}`}>
+            {product.category?.toLocaleUpperCase() || "Uncategorized"}
           </span>
         </div>
         <div className="flex-1 my-3">
