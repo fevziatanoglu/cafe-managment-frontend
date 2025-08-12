@@ -1,5 +1,5 @@
 import type { PRODUCT, PRODUCT_CATEGORY } from "../../types/Product";
-import { Coffee, Edit2, Trash2 } from "lucide-react";
+import { Coffee, CupSoda, Utensils, Edit2, Trash2, CakeSlice } from "lucide-react";
 import ProductForm from "./ProductForm";
 import useStore from "../../store";
 
@@ -52,6 +52,14 @@ function ProductItem({ product }: ProductItemProps) {
             alt={product.name}
             className="object-cover w-full h-full"
           />
+        ) : product.category === 'hot drink' ? (
+          <Coffee className="h-20 w-20 text-white" />
+        ) : product.category === 'cold drink' ? (
+          <CupSoda className="h-20 w-20 text-white" />
+        ) : product.category === 'dessert' ? (
+          <CakeSlice className="h-20 w-20 text-white" />
+        ) : product.category === 'food' ? (
+          <Utensils className="h-20 w-20 text-white" />
         ) : (
           <Coffee className="h-20 w-20 text-white" />
         )}

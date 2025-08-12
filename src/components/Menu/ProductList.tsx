@@ -5,7 +5,7 @@ import ProductItemSkeleton from "./ProductItemSkeleton";
 import { GenericFilter, type FilterOption } from "../Common/GenericFilter";
 import useStore from "../../store";
 import ProductForm from "./ProductForm";
-import { Coffee, CupSoda, IceCream, Utensils } from "lucide-react";
+import { CakeSlice, Coffee, CupSoda, Utensils } from "lucide-react";
 
 const productCategoryOptions: FilterOption<PRODUCT_CATEGORY | "all">[] = [
   {
@@ -34,7 +34,7 @@ const productCategoryOptions: FilterOption<PRODUCT_CATEGORY | "all">[] = [
     label: "Dessert",
     count: undefined,
     color: "bg-yellow-100 text-yellow-700 hover:bg-yellow-200",
-    icon: <IceCream className="w-4 h-4" />,
+    icon: <CakeSlice className="w-4 h-4" />,
   },
   {
     value: "food",
