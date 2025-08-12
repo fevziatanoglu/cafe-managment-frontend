@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Coffee, Edit2, Trash2, MoreVertical, Clock, Utensils, Calendar, CheckCircle, ReceiptIcon } from 'lucide-react';
+import { Coffee, Edit2, Trash2, MoreVertical, Clock, Utensils, Calendar, CheckCircle, ReceiptIcon, PenBoxIcon } from 'lucide-react';
 import type { TABLE_STATUS, TABLE_WITH_ORDERS } from '../../types/Table';
 import useStore from '../../store';
 import TableForm from './TableForm';
 import OrdersPayModal from '../Orders/OrderPayModal';
+import OrderForm from '../Orders/OrderForm';
 
 interface TableCardProps {
   table: TABLE_WITH_ORDERS;
@@ -155,16 +156,30 @@ export default function TableItem({ table }: TableCardProps) {
       </div>
 
 
-      {table.status === 'occupied' && (
+      <div className="space-y-3 mb-2 mt-auto">
+        {/* Create Order Button - Always visible */}
         <button
-          onClick={() => { openModal(<OrdersPayModal table={table} orders={table.orders} />, 'Pay Table', '2xl') }}
-          className="flex items-center justify-center space-x-2 px-4 py-3 my-4 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 text-white rounded-xl text-sm font-bold hover:from-emerald-600 hover:via-green-600 hover:to-emerald-700 transition-all duration-300 border-2 border-emerald-400 shadow-lg hover:cursor-pointer hover:scale-105 active:scale-95"
-          title="Process Payment"
+          onClick={() => { openModal(<OrderForm table={table} />, `Create Order for Table ${table.number}`, '2xl') }}
+          className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-amber-100 text-amber-700 rounded-xl text-sm font-medium hover:bg-amber-200 border-2 border-amber-200 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+          title="Create New Order for this Table"
         >
-          <ReceiptIcon className="h-5 w-5" />
-          <span>Pay Table</span>
+          <PenBoxIcon className="h-5 w-5" />
+          <span>Get Order</span>
         </button>
-      )}
+
+        {/* Pay Table Button - Only for occupied tables */}
+        {table.status === 'occupied' && (
+          <button
+            onClick={() => { openModal(<OrdersPayModal table={table} orders={table.orders} />, `Pay Table ${table.number}`, '2xl') }}
+            className="w-full flex items-center justify-center space-x-3 px-6 py-3 bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 text-white rounded-2xl text-sm font-bold hover:from-emerald-600 hover:via-green-600 hover:to-emerald-700 transition-all duration-300 border-2 border-emerald-400 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+            title="Process Payment for this Table"
+          >
+            <ReceiptIcon className="h-5 w-5" />
+            <span>Pay Table</span>
+          </button>
+        )}
+      </div>
+     
 
       {/* Active Orders Section - Only show if there are orders */}
       {table.orders.length > 0 && (
@@ -215,37 +230,37 @@ export default function TableItem({ table }: TableCardProps) {
           </div>
         </div>
       )}
-
+      
       {/* Quick Status Actions - Always at bottom */}
       <div className="mt-auto">
         <div className="flex justify-center gap-1 md:gap-2">
-          {table.status !== 'empty' && (
+          {table.status === 'reserved' && (
             <button
               onClick={() => handleStatusChange('empty')}
-              className="flex items-center space-x-1 md:space-x-2 px-2 py-2 md:px-4 md:py-3 bg-green-100 text-green-700 rounded-xl text-xs md:text-sm font-medium hover:bg-green-200 transition-colors border-2 border-green-200 shadow-lg hover:shadow-xl"
+              className="w-full flex items-center justify-center space-x-1 px-1 py-2 md:px-4 md:py-3 bg-green-100 text-green-700 rounded-xl text-xs md:text-sm font-medium hover:bg-green-200 transition-colors border-2 border-green-200 shadow-lg hover:shadow-xl"
               title="Set Empty"
             >
-              <CheckCircle className="h-4 w-4 md:h-5 md:w-5" />
+              <CheckCircle className="h-4 w-4" />
               <span>Empty</span>
             </button>
           )}
           {table.status !== 'occupied' && (
             <button
               onClick={() => handleStatusChange('occupied')}
-              className="flex items-center space-x-1 md:space-x-2 px-2 py-2 md:px-4 md:py-3 bg-red-100 text-red-700 rounded-xl text-xs md:text-sm font-medium hover:bg-red-200 transition-colors border-2 border-red-200 shadow-lg hover:shadow-xl"
+              className="w-full flex items-center justify-center space-x-1 px-1 py-2 md:px-4 md:py-3 bg-red-100 text-red-700 rounded-xl text-xs md:text-sm font-medium hover:bg-red-200 transition-colors border-2 border-red-200 shadow-lg hover:shadow-xl"
               title="Set Occupied"
             >
-              <Utensils className="h-4 w-4 md:h-5 md:w-5" />
+              <Utensils className="h-4 w-4" />
               <span>Occupied</span>
             </button>
           )}
-          {table.status !== 'reserved' && (
+          {table.status === 'empty' && (
             <button
               onClick={() => handleStatusChange('reserved')}
-              className="flex items-center space-x-1 md:space-x-2 px-2 py-2 md:px-4 md:py-3 bg-blue-100 text-blue-700 rounded-xl text-xs md:text-sm font-medium hover:bg-blue-200 transition-colors border-2 border-blue-200 shadow-lg hover:shadow-xl"
+              className="w-full flex items-center justify-center space-x-1 px-1 py-2 md:px-4 md:py-3 bg-blue-100 text-blue-700 rounded-xl text-xs md:text-sm font-medium hover:bg-blue-200 transition-colors border-2 border-blue-200 shadow-lg hover:shadow-xl"
               title="Set Reserved"
             >
-              <Calendar className="h-4 w-4 md:h-5 md:w-5" />
+              <Calendar className="h-4 w-4 " />
               <span>Reserved</span>
             </button>
           )}

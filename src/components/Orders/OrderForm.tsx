@@ -6,9 +6,10 @@ import ErrorBox from '../Auth/ErrorBox';
 import { createOrderSchema, type CreateOrderFormValues } from '../../validations/orderSchema';
 import type { ORDER, ORDER_ITEM } from '../../types/Order';
 import OrderProductSelectionModal from './OrderProductSelectionModal';
+import type { TABLE } from '../../types';
 
-export default function OrderForm({ order }: { order?: ORDER }) {
-  const { createOrderFetch, updateOrderFetch, closeModal, tables , getTablesFetch , getProductsFetch } = useStore();
+export default function OrderForm({ order, table }: { order?: ORDER, table?: TABLE }) {
+  const { createOrderFetch, updateOrderFetch, closeModal, tables, getTablesFetch, getProductsFetch , getTablesWithOrders } = useStore();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [productModalOpen, setProductModalOpen] = useState<boolean>(false);
@@ -20,23 +21,24 @@ export default function OrderForm({ order }: { order?: ORDER }) {
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm<CreateOrderFormValues>({
     resolver: zodResolver(createOrderSchema),
     defaultValues: {
-      tableId: order?.tableId || '',
-      tableName: order?.tableName || '',
+      tableId: table?._id || order?.tableId || '',
+      tableName: table?.number + " Table" || order?.tableName || '',
       items: order?.items || [],
       note: order?.note || '',
-      status: order?.status,
+      status: order?.status || 'pending',
     },
   });
 
   useEffect(() => {
-    getTablesFetch();
+    if (!table) {
+      getTablesFetch();
+    }
     getProductsFetch();
-  }, [getProductsFetch, getTablesFetch]);
+  }, [getProductsFetch, getTablesFetch, table]);
 
   const onSubmit = async (data: CreateOrderFormValues) => {
     setIsLoading(true);
     setError(null);
-
     try {
       let response;
       if (order) {
@@ -58,6 +60,7 @@ export default function OrderForm({ order }: { order?: ORDER }) {
       }
       if (response.success) {
         reset();
+        getTablesWithOrders()
         closeModal();
       } else {
         setError(response.message || "Operation failed. Please try again.");
@@ -101,25 +104,33 @@ export default function OrderForm({ order }: { order?: ORDER }) {
               : 'border-amber-300 hover:border-amber-400 focus:bg-white'
             }
           `}
-          defaultValue={order?.tableId || ''}
+          defaultValue={table?._id || order?.tableId || ''}
           onChange={(e) => {
             const selectedTable = e.target.options[e.target.selectedIndex];
             setValue('tableId', selectedTable.value);
             setValue('tableName', selectedTable.dataset.name);
           }}
         >
-          <option value="" disabled>
-            Select a table
-          </option>
-          {tables.map((table) => (
-            <option
-              key={table._id}
-              value={table._id}
-              data-name={`Table ${table.number}`}
-            >
+          {table ? (
+            <option value={table._id} data-name={`Table ${table.number}`}>
               Table {table.number} ({table.status})
             </option>
-          ))}
+          ) : (
+            <>
+              <option value="" disabled>
+                Select a table
+              </option>
+              {tables.map((t) => (
+                <option
+                  key={t._id}
+                  value={t._id}
+                  data-name={`Table ${t.number}`}
+                >
+                  Table {t.number} ({t.status})
+                </option>
+              ))}
+            </>
+          )}
         </select>
         {errors.tableId && (
           <p className="mt-1 text-sm text-red-600 flex items-center">
