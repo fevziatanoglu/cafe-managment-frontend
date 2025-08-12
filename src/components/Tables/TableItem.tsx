@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { Coffee, Edit2, Trash2, MoreVertical, Clock, Utensils, Calendar, CheckCircle, ReceiptIcon, PenBoxIcon } from 'lucide-react';
+import { Coffee, Edit2, Trash2, MoreVertical, Utensils, Calendar, CheckCircle, ReceiptIcon, PenBoxIcon } from 'lucide-react';
 import type { TABLE_STATUS, TABLE_WITH_ORDERS } from '../../types/Table';
 import useStore from '../../store';
 import TableForm from './TableForm';
 import OrdersPayModal from '../Orders/OrderPayModal';
 import OrderForm from '../Orders/OrderForm';
+import TableWaitingOrderItem from './TableWaitingOrderItem';
 
 interface TableCardProps {
   table: TABLE_WITH_ORDERS;
@@ -14,15 +15,7 @@ export default function TableItem({ table }: TableCardProps) {
   const { openModal, deleteTableFetch, updateTableFetch } = useStore();
   const [showActions, setShowActions] = useState(false);
 
-  const getMinutesAgo = (dateString: string) => {
-    const orderDate = new Date(dateString.replace(' ', 'T'));
-    const now = new Date();
-    const diffMs = now.getTime() - orderDate.getTime();
-    const diffMin = Math.floor(diffMs / 60000);
-    if (diffMin < 1) return 'just now';
-    if (diffMin === 1) return '1 minute ago';
-    return `${diffMin} minutes ago`;
-  }
+  
 
   const getTableStyle = (status: string) => {
     switch (status) {
@@ -187,7 +180,7 @@ export default function TableItem({ table }: TableCardProps) {
           <div className="flex items-center justify-between mb-3">
             <h4 className="font-semibold text-gray-700 flex items-center space-x-2">
               <Coffee className="h-4 w-4" />
-              <span>Waited Orders</span>
+              <span>Waiting Orders</span>
             </h4>
             <span className="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-sm font-bold">
               {table.orders.length}
@@ -196,31 +189,7 @@ export default function TableItem({ table }: TableCardProps) {
 
           <div className="space-y-2 max-h-24 overflow-y-auto">
             {table.orders.slice(0, 3).map(order => (
-              <div key={order._id} className="bg-white/90 rounded-lg p-2 border border-gray-200">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-2">
-                    <span className={`w-3 h-3 rounded-full ${order.status === 'pending' ? 'bg-yellow-400' :
-                      order.status === 'preparing' ? 'bg-blue-400' :
-                        order.status === 'served' ? 'bg-green-400' : 'bg-gray-400'
-                      }`}></span>
-                    <span className="text-sm font-medium text-gray-700">
-                      #{order._id.slice(-4)}
-                    </span>
-                  </div>
-                  <span className="text-sm font-bold text-amber-600">
-                    ₺{order.total.toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center mt-1">
-                  <span className="text-xs text-gray-500 capitalize">
-                    {order.status}
-                  </span>
-                  <div className="flex items-center space-x-1 text-xs text-gray-400">
-                    <Clock className="h-3 w-3" />
-                    <span>{getMinutesAgo(order.createdAt)}</span>
-                  </div>
-                </div>
-              </div>
+              <TableWaitingOrderItem key={order._id} order={order} />
             ))}
             {table.orders.length > 3 && (
               <div className="text-center text-xs text-gray-500 pt-1">
