@@ -4,9 +4,11 @@ export interface PRODUCT {
   description?: string;
   image?: string;
   price: number;
-  category?: string;
+  category?: PRODUCT_CATEGORY;
   isActive: boolean;
   adminId: string;
   createdAt: string;
   updatedAt: string;
 }
+
+export type PRODUCT_CATEGORY = 'hot drink' | 'cold drink' | 'dessert' | 'food';
