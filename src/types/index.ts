@@ -5,3 +5,4 @@ export type {TOKEN_USER_DATA} from "./TokenUser";
 export type { TABLE , TABLE_STATUS , TABLE_WITH_ORDERS } from "./Table";
 export type { PRODUCT , PRODUCT_CATEGORY } from "./Product";
 export type { STAFF} from "./Staff";
+export type { CAFE } from "./Cafe";

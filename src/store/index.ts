@@ -10,9 +10,10 @@ import { createStaffSlice, type StaffStore } from "./slices/staffStore";
 import { createOrderSlice, type OrderStore } from "./slices/orderStore";
 import { createTableSlice, type TableStore } from "./slices/tableStore";
 import { createProductSlice, type ProductStore } from "./slices/productStore";
+import { createCafeSlice, type CafeStore } from "./slices/cafeStore";
 
 
-export type Store = AuthStore & ModalStore & StaffStore & OrderStore & TableStore & ProductStore;
+export type Store = AuthStore & ModalStore & StaffStore & OrderStore & TableStore & ProductStore & CafeStore;
 
 export const useStore = create<Store>()(
   devtools((set, get, api) => ({
@@ -21,7 +22,8 @@ export const useStore = create<Store>()(
     ...createStaffSlice(set, get, api),
     ...createOrderSlice(set, get, api),
     ...createTableSlice(set, get, api),
-    ...createProductSlice(set, get, api)
-  }),{name: "AppStore"})
+    ...createProductSlice(set, get, api),
+    ...createCafeSlice(set, get, api)
+  }), { name: "AppStore" })
 );
 export default useStore;
