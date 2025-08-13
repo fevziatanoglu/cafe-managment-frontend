@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Coffee } from 'lucide-react';
 import LoginForm from './LoginForm';
-import RegisterForm from './RegisterForm';
 import useStore from '../../store';
+import RegisterAndCafeFlow from './RegisterAndCafeFlow';
 
 export default function AuthModal({initialTab = 'login'} : {initialTab?: 'login' | 'register'}) {
   const { closeModal } = useStore();
@@ -60,7 +60,7 @@ export default function AuthModal({initialTab = 'login'} : {initialTab?: 'login'
         {activeTab === 'login' ? (
           <LoginForm onSuccess={closeModal} />
         ) : (
-          <RegisterForm onSuccess={closeModal} />
+          <RegisterAndCafeFlow />
         )}
       </div>
     </div>

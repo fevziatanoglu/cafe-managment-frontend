@@ -4,14 +4,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterFormValues } from '../../validations/authSchema';
 import { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Coffee } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
 import ErrorBox from './ErrorBox';
 
 
 
 export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) {
-    const { registerFetch } = useStore();
-    const navigate = useNavigate()
+    const { registerFetch  } = useStore();
+    // const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -27,7 +26,6 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) 
             const response = await registerFetch(data);
             if (response.success) {
                 onSuccess?.();
-                navigate('/login');
             } else {
                 setError(response.message || "Registration failed. Please try again.");
             }
@@ -38,18 +36,6 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) 
 
     return (
         <div className="w-full">
-            {!onSuccess && (
-                <div className="mb-8 text-center">
-                    <div className="flex justify-center mb-4">
-                        <div className="bg-amber-100 p-3 rounded-full">
-                            <Coffee className="h-8 w-8 text-amber-600" />
-                        </div>
-                    </div>
-                    <h2 className="text-3xl font-bold text-amber-800 mb-2">Join Our Café</h2>
-                    <p className="text-amber-600">Create your account today</p>
-                </div>
-            )}
-
             {error && <ErrorBox message={error} />}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -200,17 +186,6 @@ export default function RegisterForm({ onSuccess }: { onSuccess?: () => void }) 
                 </button>
             </form>
 
-            {/* Sign In Link - only show if not in modal */}
-            {!onSuccess && (
-                <div className="mt-8 text-center">
-                    <p className="text-sm text-amber-600">
-                        Already have an account?{' '}
-                        <Link to="/login" className="text-amber-700 hover:text-amber-800 font-medium transition-colors underline">
-                            Sign in here
-                        </Link>
-                    </p>
-                </div>
-            )}
         </div>
     );
 }
