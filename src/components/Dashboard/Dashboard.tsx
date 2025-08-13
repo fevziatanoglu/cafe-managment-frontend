@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ShoppingCart, 
-  Users, 
+import {
+  ShoppingCart,
+  Users,
   DollarSign,
   TableProperties
 } from 'lucide-react';
@@ -13,9 +13,13 @@ import { RecentOrders } from './RecentOrders';
 import { StaffList } from './StaffList';
 import { PopularMenu } from './PopularMenu';
 import { TablesStatus } from './TablesStatus';
+import useStore from '../../store';
+import CafeForm from '../Cafe/CafeForm';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+
+  const { openModal , cafe } = useStore();
 
   const recentOrders = [
     { id: 1, table: '5', customer: 'John D.', amount: 125, time: '14:30', status: 'completed' as const },
@@ -58,6 +62,9 @@ export const Dashboard: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       <DashboardHeader totalRevenue={todayStats.totalRevenue} growth={todayStats.growth} />
 
+      <button onClick={() => openModal(<CafeForm cafe={cafe}/> , "Edit Cafe" )}>
+        Edit Cafe
+      </button>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

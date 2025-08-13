@@ -27,6 +27,7 @@ export default function CafeForm({ cafe }: CafeFormProps) {
             name: cafe?.name || "",
             address: cafe?.address || "",
             image: cafe?.image || "",
+            owner: user?._id || "",
         },
     });
 
@@ -48,7 +49,7 @@ export default function CafeForm({ cafe }: CafeFormProps) {
             payload = new FormData();
             payload.append("name", data.name);
             payload.append("address", data.address || "");
-            payload.append("owner", user?.id || "");
+            payload.append("owner", user?._id || "");
             if (image) {
                 payload.append("image", image);
             }
@@ -56,7 +57,7 @@ export default function CafeForm({ cafe }: CafeFormProps) {
             payload = {
                 ...data,
                 image: image || "",
-                owner: user?.id || "",
+                owner: user?._id || "",
             };
         }
         if (cafe && cafe._id) {
