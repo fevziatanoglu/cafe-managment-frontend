@@ -61,3 +61,16 @@ export const getProductById = async (
     return handleApiError(error);
   }
 };
+
+// Get Products By Slug
+export const getProductsBySlug = async (
+  slug: string,
+  category?: string
+): Promise<API_RESPONSE<{products: PRODUCT[] , cafe : {name: string, image: string}}>> => {
+  try {
+    const response = await requestApi.get(`/products/menu/${slug}?category=${(category)}`);
+    return response.data;
+  } catch (error) {
+    return handleApiError(error);
+  }
+};
