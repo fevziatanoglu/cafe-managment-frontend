@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./components/Landing/LandingPage";
 import { Dashboard } from "./components/Dashboard";
-import { PublicMenu } from "./components/PublicMenu/PublicMenu";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import MainLayout from "./layouts/MainLayout";
@@ -12,6 +11,7 @@ import Staff from "./pages/staff/staff";
 import Orders from "./pages/orders/orders";
 import Tables from "./pages/tables/tables";
 import Menu from "./pages/menu/menu";
+import PublicMenu from "./pages/publicmenu/PublicMenu";
 
 function App() {
   return (
@@ -37,7 +37,7 @@ function App() {
             <Route path="/tables" element={<Tables />} />
           </Route>
         </Route>
-        <Route path="/publicmenu" element={<PublicMenu />} />
+        <Route path="/publicmenu/:slug" element={<PublicMenu />} />
       </Routes>
     </Router>
   );
