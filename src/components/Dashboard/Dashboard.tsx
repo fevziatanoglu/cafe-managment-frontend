@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ShoppingCart,
   Users,
   DollarSign,
-  TableProperties
+  
 } from 'lucide-react';
 import { RevenueChart } from './RevenueChart';
 import { DashboardHeader } from './DashboardHeader';
@@ -18,8 +17,11 @@ import CafeForm from '../Cafe/CafeForm';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-
-  const { openModal , cafe } = useStore();
+  const { openModal , cafe , todayReport, todayReportFetch } = useStore();
+  
+  useEffect(() => {
+    todayReportFetch();
+  }, [todayReportFetch]);
 
   const recentOrders = [
     { id: 1, table: '5', customer: 'John D.', amount: 125, time: '14:30', status: 'completed' as const },
@@ -58,9 +60,15 @@ export const Dashboard: React.FC = () => {
     growth: 12.5
   };
 
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       <DashboardHeader totalRevenue={todayStats.totalRevenue} growth={todayStats.growth} />
+
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        
+      </div>
 
       <button onClick={() => openModal(<CafeForm cafe={cafe}/> , "Edit Cafe" )}>
         Edit Cafe
@@ -69,29 +77,18 @@ export const Dashboard: React.FC = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <StatsCard
-            title="Total Orders"
-            value={todayStats.totalOrders}
-            icon={ShoppingCart}
-            iconColor="from-blue-500 to-blue-600"
-          />
-          <StatsCard
-            title="Average Order"
-            value={`$${todayStats.avgOrderValue}`}
-            icon={DollarSign}
-            iconColor="from-green-500 to-green-600"
-          />
-          <StatsCard
-            title="Active Staff"
-            value={employees.filter(e => e.status === 'active').length}
-            icon={Users}
-            iconColor="from-purple-500 to-purple-600"
-          />
-          <StatsCard
-            title="Available Tables"
-            value={tables.filter(t => t.status === 'available').length}
-            icon={TableProperties}
-            iconColor="from-indigo-500 to-purple-600"
-          />
+          title="Total Sales"
+          value={todayReport?.totalSales ?? 0}
+          icon={DollarSign}
+          iconColor="from-green-500 to-green-600"
+        />
+        <StatsCard
+          title="Total Customers"
+          value={todayReport?.totalCustomers ?? 0}
+          icon={Users}
+          iconColor="from-purple-500 to-purple-600"
+        />
+        
         </div>
 
         <div className="mb-8">
