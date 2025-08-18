@@ -6,3 +6,4 @@ export type { TABLE , TABLE_STATUS , TABLE_WITH_ORDERS } from "./Table";
 export type { PRODUCT , PRODUCT_CATEGORY } from "./Product";
 export type { STAFF} from "./Staff";
 export type { CAFE } from "./Cafe";
+export type { DAILY_REPORT, WEEKLY_SUMMARY } from "./DailyReport";

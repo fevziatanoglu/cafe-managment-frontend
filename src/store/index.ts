@@ -11,9 +11,10 @@ import { createOrderSlice, type OrderStore } from "./slices/orderStore";
 import { createTableSlice, type TableStore } from "./slices/tableStore";
 import { createProductSlice, type ProductStore } from "./slices/productStore";
 import { createCafeSlice, type CafeStore } from "./slices/cafeStore";
+import { createDailyReportSlice, type DailyReportStore } from "./slices/dailyReportStore";
 
 
-export type Store = AuthStore & ModalStore & StaffStore & OrderStore & TableStore & ProductStore & CafeStore;
+export type Store = AuthStore & ModalStore & StaffStore & OrderStore & TableStore & ProductStore & CafeStore & DailyReportStore;
 
 export const useStore = create<Store>()(
   devtools((set, get, api) => ({
@@ -23,7 +24,8 @@ export const useStore = create<Store>()(
     ...createOrderSlice(set, get, api),
     ...createTableSlice(set, get, api),
     ...createProductSlice(set, get, api),
-    ...createCafeSlice(set, get, api)
+    ...createCafeSlice(set, get, api),
+    ...createDailyReportSlice(set, get, api)
   }), { name: "AppStore" })
 );
 export default useStore;
