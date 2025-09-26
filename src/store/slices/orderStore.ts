@@ -28,7 +28,12 @@ interface OrderActions {
   deleteOrderFetch: (id: string) => Promise<API_RESPONSE<ORDER>>;
   setSelectedOrder: (order: ORDER | null) => void;
   createPaidOrderFetch: (orderData: { tableId: string; tableNumber: string; items: { productId: string; quantity: number }[] }) => Promise<API_RESPONSE<ORDER>>;
+  // WebSocket actions
+  addOrder: (order: ORDER) => void;
+  updateOrder: (order: ORDER) => void;
+  removeOrder: (orderId: string) => void;
 }
+
 
 export type OrderStore = OrderState & OrderActions;
 
@@ -62,32 +67,17 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
   createOrderFetch: async (orderData) => {
     set({ isOrdersLoading: true });
     const response = await createOrder(orderData);
-    if (response.success && response.data) {
-      const currentOrders = get().orders;
-      set({ orders: [...currentOrders, response.data] });
-    }
     set({ isOrdersLoading: false });
     return response;
   },
 
   updateOrderFetch: async (id, orderData) => {
     const response = await updateOrder(id, orderData);
-    if (response.success && response.data) {
-      const currentOrders = get().orders;
-      const updatedOrders = currentOrders.map(order =>
-        order._id === id ? response.data! : order
-      );
-      set({ orders: updatedOrders, selectedOrder: response.data });
-    }
+
     return response;
   },
   deleteOrderFetch: async (id) => {
     const response = await deleteOrder(id);
-    if (response.success) {
-      const currentOrders = get().orders;
-      const filteredOrders = currentOrders.filter(order => order._id !== id);
-      set({ orders: filteredOrders, selectedOrder: null });
-    }
     return response;
   },
 
@@ -98,9 +88,6 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
   getPaidOrdersFetch: async () => {
     set({ isOrdersLoading: true });
     const response = await getPaidOrders();
-    if (response.success && response.data) {
-      set({ paidOrders: response.data });
-    }
     set({ isOrdersLoading: false });
     return response;
   },
@@ -115,5 +102,20 @@ export const createOrderSlice: StateCreator<OrderStore> = (set, get) => ({
     }
     set({ isOrdersLoading: false });
     return response;
+  },
+
+  // WebSocket actions for real-time updates
+  addOrder: (order) => {
+    set((state) => ({ orders: [...state.orders, order] }));
+  },
+  updateOrder: (order) => {
+    set((state) => ({
+      orders: state.orders.map((o) => (o._id === order._id ? order : o)),
+    }));
+  },
+  removeOrder: (orderId) => {
+    set((state) => ({
+      orders: state.orders.filter((o) => o._id !== orderId),
+    }));
   },
 });
