@@ -14,6 +14,7 @@ import { PopularMenu } from './PopularMenu';
 import { TablesStatus } from './TablesStatus';
 import useStore from '../../store';
 import CafeForm from '../Cafe/CafeForm';
+import ErrorButton from '../Common/DatadogErrorButton';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
       <DashboardHeader totalRevenue={todayStats.totalRevenue} growth={todayStats.growth} />
-
+      <ErrorButton />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         
